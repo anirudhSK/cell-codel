@@ -139,8 +139,8 @@ void DelayQueue::tick( void )
 	  /* continue to accumulate credit */
 	  assert( bytes_to_play_with + packet.bytes_earned < (int)packet.contents.size() );
           _pdp.front().bytes_earned += bytes_to_play_with;
-          fprintf( stderr , "%s %f Accumulating credit, current earned credit is %d and pkt size is %ld \n",
-                          _name.c_str(), convert_timestamp(now)/1000.0,_pdp.front().bytes_earned,_pdp.front().contents.size());
+  //        fprintf( stderr , "%s %f Accumulating credit, current earned credit is %d and pkt size is %ld \n",
+  //                        _name.c_str(), convert_timestamp(now)/1000.0,_pdp.front().bytes_earned,_pdp.front().contents.size());
           assert( _pdp.front().bytes_earned < (int)_pdp.front().contents.size() );
 	  bytes_to_play_with = 0;
 	}
@@ -244,6 +244,6 @@ DelayQueue::DelayedPacket DelayQueue::deque( )
 void DelayQueue::drop (DelayedPacket p) 
   { 
    drop_count++;
-   fprintf(stderr,"Codel dropped a packet with size %ld, count now at %d \n",p.contents.size(),drop_count);
+   fprintf(stderr,"%s :Codel dropped a packet with size %ld, count now at %d \n",_name.c_str(),p.contents.size(),drop_count);
   }
 
