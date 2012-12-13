@@ -2,6 +2,7 @@
 #include "slotted-sender.hh"
 #include <stdlib.h>
 #include <assert.h>
+#include <fstream>
 
 int main( int argc, char* argv[] )
 {
@@ -21,6 +22,8 @@ int main( int argc, char* argv[] )
 	int i=0;
 	for (i=0; i<N; i++)
 	{
+//		probability=(i*1.0)/45.0;
+		fprintf(stderr,"Using probability %f \n",probability);
 		SlottedSender* next_sender = new SlottedSender (i, probability);
 		sender_list.push_back( next_sender );
 		link.add_sender( next_sender );
