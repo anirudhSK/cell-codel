@@ -3,11 +3,12 @@
 #include <stdlib.h>
 #include <fstream>
 
-SlottedSender::SlottedSender( int32_t flow_id, double probability ) :
+SlottedSender::SlottedSender( int32_t flow_id, double rate ) :
 	_flow_id( flow_id ),
-	_probability( probability ),
+	_rate( rate ),
 	_tick( 0 ),
-	_flow_queue( std::queue<Packet>() )
+	_flow_queue( std::queue<Packet>() ),
+	_arrivals( Poisson ( rate ) )
 {}
 
 void SlottedSender::tick( uint64_t current_tick )
@@ -26,10 +27,12 @@ void SlottedSender::send_packet()
 
 void SlottedSender::receive_packet()
 {
-	double sample = ( double )random() / RAND_MAX;
-	if ( sample < _probability )
+	const int num_packets = _arrivals.sample();
+	int count = 0;
+	while ( count < num_packets )
 	{
 		Packet p(_flow_id, _tick);
 		_flow_queue.push(p);
+		count++;
 	}
 }

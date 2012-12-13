@@ -7,9 +7,9 @@
 int main( int argc, char* argv[] )
 {
 	assert (argc == 2);
-	double probability= atof( argv[1] );
+	int seed = atoi( argv[1] );
 	/* make it deterministic */
-	srand(0);
+	srand( seed );
 
 	/* Link */
 	SlottedLink link;
@@ -22,14 +22,15 @@ int main( int argc, char* argv[] )
 	int i=0;
 	for (i=0; i<N; i++)
 	{
-//		probability=(i*1.0)/45.0;
-		fprintf(stderr,"Using probability %f \n",probability);
-		SlottedSender* next_sender = new SlottedSender (i, probability);
+		//float rate=(i*1.0)/45.0;
+		float rate=0.1;
+		fprintf(stderr,"Using rate %f \n",rate);
+		SlottedSender* next_sender = new SlottedSender (i, rate);
 		sender_list.push_back( next_sender );
 		link.add_sender( next_sender );
 	}
 	uint64_t current_tick=0;
-	for ( current_tick=0; current_tick < 10000000; current_tick++ )
+	for ( current_tick=0; current_tick < 1000000; current_tick++ )
 	{
 		link.tick(current_tick);
 		for (i=0; i<N; i++)
