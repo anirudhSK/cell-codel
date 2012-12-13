@@ -6,26 +6,26 @@
 
 int main( int argc, char* argv[] )
 {
-	assert (argc == 2);
-	int seed = atoi( argv[1] );
+	assert (argc == 3);
+	int seed  = atoi( argv[1] );
+	bool skew = ( std::string(argv[2]) == "skew" ) ;
 	/* make it deterministic */
 	srand( seed );
 
 	/* Link */
 	SlottedLink link;
-		
+
 	/* Next sender */
 	std::vector<SlottedSender *> sender_list;
 
 	/* pick 10 senders */
 	int N = 10;
-	int i=0;
-	for (i=0; i<N; i++)
+	int i = 0;
+	for ( i=0; i<N; i++ )
 	{
-		//float rate=(i*1.0)/45.0;
-		float rate=0.1;
+		float rate = skew ?  (i*0.99/45.0) + 1e-30 :  0.099 + 1e-30;
 		fprintf(stderr,"Using rate %f \n",rate);
-		SlottedSender* next_sender = new SlottedSender (i, rate);
+		SlottedSender* next_sender = new SlottedSender( i, rate, seed );
 		sender_list.push_back( next_sender );
 		link.add_sender( next_sender );
 	}

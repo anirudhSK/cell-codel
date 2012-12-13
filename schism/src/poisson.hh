@@ -9,10 +9,11 @@ class Poisson
 {
 	private:
 		boost::random::poisson_distribution<> distribution;
+		int _seed;
 
 	public:
-		Poisson( double rate ) : distribution( rate ) {}
-		int sample( void ) { return distribution( get_generator() ); }
+		Poisson( double rate, int seed ) : distribution( rate ) , _seed(seed) {}
+		int sample( void ) { return distribution( get_generator( _seed ) ); }
 };
 
 #endif

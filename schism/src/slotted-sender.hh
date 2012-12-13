@@ -15,7 +15,7 @@ private :
 	Poisson _arrivals;
 	
 public :
-	SlottedSender( int32_t flow_id, double probability ) ;
+	SlottedSender( int32_t flow_id, double rate, int seed ) ;
 	
 	void tick( uint64_t current_tick );
 	
