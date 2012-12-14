@@ -1,0 +1,27 @@
+=================First set of decent results from testing round robin====================================
+Skewed scenarios : Every flow has rate proportional to its flow ID i.
+Uniform scenarios : Every flow has rate 0.099
+
+Flow 9 : Worst hit in the skewed scernario :
+=================================================================
+anirudh@Sim-Box:~/BeatingCoDel/cell-codel/schism/src$ cat skew-* | grep "from flow 9" | python quantiles.py > /dev/null
+median  105
+95th percentile  634
+99th percentile  1013
+anirudh@Sim-Box:~/BeatingCoDel/cell-codel/schism/src$ cat uniform-* | grep "from flow 9" | python quantiles.py > /dev/null
+median  23
+95th percentile  206
+99th percentile  365
+
+Distributions across all flows :
+===================================================================
+anirudh@Sim-Box:~/BeatingCoDel/cell-codel/schism/src$ cat skew-* | grep "from flow" | python quantiles.py > /dev/null
+median  9
+95th percentile  265
+99th percentile  634
+anirudh@Sim-Box:~/BeatingCoDel/cell-codel/schism/src$ cat uniform-* | grep "from flow" | python quantiles.py > /dev/null
+median  23
+95th percentile  203
+99th percentile  377
+
+It looks like skewing does have an effect on delay distributions for the heavy hitters.
