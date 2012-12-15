@@ -4,8 +4,12 @@ fh=sys.stdin
 delay_list=[]
 for line in fh.readlines() :
 	line.strip();
-	delay=int(line.split()[11].strip(','))
-	delay_list.append(delay)
+	if len(line.split()) < 4 :
+		continue;
+	flow_id=int(line.split()[8])
+	if flow_id == int(sys.argv[1]) :
+		delay=int(line.split()[11].strip(','))
+		delay_list.append(delay)
 delay_list.sort()
 i=0
 for i in range(1,100,1) :
