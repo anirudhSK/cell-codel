@@ -1,3 +1,7 @@
 I ran a more controlled experiment with Round Robin scheduling. 2 flows, each with Poisson arrivals, feed into a link with a deterministic total egress rate of 1 packet per tick. The scheduler is work conserving. I pick the arrival rate of the 2 flows such that they always sum to 0.99 (to leave some slack in the link and ensure stability).
 
 Now, if I vary the rate of flow 0 from 0.495 to 0.98 packets per slot, then I implicitly vary the rate of flow 1 from 0.01 to 0.495 packets per slot. Now we run each simulation for 1e6 slots and repeat with 10 different seeds. In the process, we get a high fidelity estimate of the median, 95th percentile and 99th percentile of flow x as a function of its rate. This graph is in resultDec15.pdf. The intersting part of the graph is how it peaks near 0.55 packets per slot. This is where RR screws up most for a particular flow in a determinstic sense. results-ratio-Dec15.pdf demonstrates the delay-fairness measured at the 99th percentile. We should flatten this out as much as possible, maybe at the expense of increasing the median delays for the low rate flows ?
+
+22:43
+
+Double checked my simulation results by running them one more time completely. The results from these runs match my morning runs exactly, so they are valid simulations. Also, reviewed my code once more. It seems to be bug free.
