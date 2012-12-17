@@ -20,9 +20,9 @@ public :
 	void tick( uint64_t current_tick );
 	
 	void receive_packet();
-
-	void send_packet();
-
+	
+	Packet send_packet();
+	
 	bool is_backlogged() { return !_flow_queue.empty(); }
 };
 

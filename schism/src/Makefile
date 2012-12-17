@@ -1,5 +1,5 @@
-source = packet.cc slotted-link.cc slotted-sender.cc random.cc
-objects = packet.o slotted-link.o slotted-sender.o random.o
+source = packet.cc slotted-link.cc slotted-sender.cc random.cc rr-scheduler.cc
+objects = packet.o slotted-link.o slotted-sender.o random.o rr-scheduler.o
 executables = schism
 CXX = g++
 CXXFLAGS = -g -O3 -std=c++0x -ffast-math -pedantic -Werror -Wall -Wextra -Weffc++ -fno-default-inline -pipe -D_FILE_OFFSET_BITS=64 -D_XOPEN_SOURCE=500 -D_GNU_SOURCE
