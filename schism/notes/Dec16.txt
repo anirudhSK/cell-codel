@@ -1,0 +1,34 @@
+I now have comparisons between Weighted RR (WRR), and naive RR(RR) for a really restricted case of 2 flows. This note obsoletes the previous notes from Dec 15 and 14.
+
+Setup:
+=====================
+2 flows, one with rate x, and the other with 0.99 -x (both Poisson processes) competing on a single link which operates at 1 packet per tick.
+x takes the values : 0.495,0.5,0.51,0.52,0.53,0.54,0.55,0.56,0.57,0.58,0.59,0.6,0.7.0.8,0.9 and 0.98
+
+We plot the delays at the p^{th} percentiles and the delay fairness at the p^{th} percentile ( ratio of delays ).
+For RR, the weights are both 1. For Weighted RR, I ran only 15 of the cases with weights :
+x=0.495: 1 and 1 (the same as the unweighted case)
+x=0.5 : 50 and 49
+x=0.51: 51 and 48
+x=0.52: 52 and 47
+.
+.
+.
+x=0.59: 59 and 41
+x=0.6 :  6 and 4
+x=0.7 :  7 and 3
+x=0.8 :  8 and 2
+x=0.9 :  9 and 1
+
+Metrics :
+=========================
+Utilisation :
+
+The system is stable since the total rate is 0.99 and the egress capacity is 1. Hence every flow gets as much as it pumps in, i.e utilisation over a long term is equal to x or 0.99 - x as the case may be. I verified this.
+
+Delay :
+
+web.mit.edu/anirudh/www/plots/delays-rr.pdf : Delays for RR
+web.mit.edu/anirudh/www/plots/delays-wrr.pdf: Delays for WRR.
+web.mit.edu/anirudh/www/plots/fairness-rr.pdf : Fairness for RR
+web.mit.edu/anirudh/www/plots/fairness-wrr.pdf: Fairness for WRR
