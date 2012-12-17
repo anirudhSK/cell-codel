@@ -8,7 +8,7 @@ int main( int argc, char* argv[] )
 {
 	assert (argc == 3);
 	int seed  = atoi( argv[1] );
-	bool skew = ( std::string(argv[2]) == "skew" ) ;
+	uint32_t x = atoi (argv[2]);
 	/* make it deterministic */
 	srand( seed );
 
@@ -19,15 +19,16 @@ int main( int argc, char* argv[] )
 	std::vector<SlottedSender *> sender_list;
 
 	/* pick 10 senders */
-	int N = 10;
+	int N = 2;
 	int i = 0;
+	fprintf(stderr,"seed is %d \n",seed);
 	for ( i=0; i<N; i++ )
 	{
-		float rate = skew ?  (i*0.99/45.0) + 1e-30 :  0.099 + 1e-30;
-		fprintf(stderr,"Using rate %f \n",rate);
-		SlottedSender* next_sender = new SlottedSender( i, rate, seed );
+		uint32_t weight = ( i==0 ) ? x : 99 -x;
+		fprintf(stderr,"Using rate %f \n",(float)weight/100.0);
+		SlottedSender* next_sender = new SlottedSender( i, (float)weight/100.0, seed );
 		sender_list.push_back( next_sender );
-		link.add_sender( next_sender );
+		link.add_sender( next_sender, weight );
 	}
 	uint64_t current_tick=0;
 	for ( current_tick=0; current_tick < 1000000; current_tick++ )
