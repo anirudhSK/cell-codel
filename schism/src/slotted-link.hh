@@ -12,18 +12,21 @@ private :
 	/* References to senders */
 	uint32_t _num_flows;
 	std::vector<SlottedSender const *> _sender_list;
+	std::vector<uint32_t> _slot_schedule;
 	uint64_t _tick;
 
-	/* Required for RR scheduling */
-	uint32_t _current_flow;
+	/* Required for weighted RR scheduling */
+	uint32_t _current_slot;
+	uint32_t _num_slots;
 
 public :
 	SlottedLink( void );
 	
 	void tick( uint64_t current_tick );
 	
-	void add_sender( SlottedSender const * sender );
+	void add_sender( SlottedSender const * sender, uint32_t weight );
 	
+	SlottedSender * get_sender_for_slot( uint32_t slot );
 };
 
 #endif
