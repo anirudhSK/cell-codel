@@ -36,9 +36,11 @@ set xlabel "Rate in pkts per slot"
 set ylabel "Delay fairness"
 set key top left
 set xrange [0:1]
-plot "plot.file" u 1:($2+0)/($5+0) w linespoints title "median ratio" ls 1, \
-     "plot.file" u 1:($3+0)/($6+0) w linespoints title "95th ratio" ls 2, \
-     "plot.file" u 1:($4+0)/($7+0) w linespoints title "99th ratio" ls 3, \
+set yrange [0.001:1000]
+set logscale y
+plot "plot.file" u 1:($2+0)/($5+0) w linespoints title "med" ls 1, \
+     "plot.file" u 1:($3+0)/($6+0) w linespoints title "95th" ls 2, \
+     "plot.file" u 1:($4+0)/($7+0) w linespoints title "99th" ls 3, \
      "plot.file" u (0.99-$1):($5+0)/($2+0) w linespoints title "" ls 1, \
      "plot.file" u (0.99-$1):($6+0)/($3+0) w linespoints title "" ls 2, \
      "plot.file" u (0.99-$1):($7+0)/($4+0) w linespoints title "" ls 3
@@ -46,11 +48,13 @@ plot "plot.file" u 1:($2+0)/($5+0) w linespoints title "median ratio" ls 1, \
 set output "delays.pdf"
 set xlabel "Rate in pkts per slot"
 set ylabel "Delay in slots"
+unset logscale
 set key top left
 set xrange [0:1]
-plot "plot.file" u 1:$2 w linespoints title "median delay" ls 1, \
-     "plot.file" u 1:$3 w linespoints title "95th delay" ls 2, \
-     "plot.file" u 1:$4 w linespoints title "99th delay" ls 3, \
-     "plot.file" u (0.99-$1):$5 w linespoints title "" ls 1, \
-     "plot.file" u (0.99-$1):$6 w linespoints title "" ls 2, \
-     "plot.file" u (0.99-$1):$7 w linespoints title "" ls 3
+set yrange [0:400]
+plot "plot.file" u 1:2 w linespoints title "med" ls 1, \
+     "plot.file" u 1:3 w linespoints title "95th" ls 2, \
+     "plot.file" u 1:4 w linespoints title "99th" ls 3, \
+     "plot.file" u (0.99-$1):5 w linespoints title "" ls 1, \
+     "plot.file" u (0.99-$1):6 w linespoints title "" ls 2, \
+     "plot.file" u (0.99-$1):7 w linespoints title "" ls 3
