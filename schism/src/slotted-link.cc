@@ -17,6 +17,7 @@ void SlottedLink::add_sender( SlottedSender const * sender, uint32_t weight )
 	_sender_list.push_back( sender );
 	_num_slots += weight ;
 	_slot_schedule.push_back( _num_slots );
+	fprintf( stderr, "Adding flow %d with weight %d \n", _num_flows, weight);
 	_num_flows++;
 }
 
