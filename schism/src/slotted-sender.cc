@@ -11,30 +11,22 @@ SlottedSender::SlottedSender( int32_t flow_id, double rate, int seed ) :
 	_arrivals( Poisson ( rate, seed ) )
 {}
 
-void SlottedSender::tick( uint64_t current_tick )
+std::vector<Packet> SlottedSender::tick( uint64_t current_tick )
 {
 	_tick=current_tick;
-	receive_packet();
+	return generate_packets();
 }
 
-Packet SlottedSender::send_packet()
+std::vector<Packet> SlottedSender::generate_packets()
 {
-	assert( !_flow_queue.empty() );
-	Packet to_send = _flow_queue.front();
-	_flow_queue.pop();
-	int64_t delay = _tick - to_send.get_tick();
-	fprintf( stderr, "Sent packet out at %lu , from flow %u with delay %ld, queue size is %lu \n", _tick, _flow_id, delay, _flow_queue.size() );
-	return to_send;
-}
-
-void SlottedSender::receive_packet()
-{
+	std::vector<Packet> pkt_vector;
 	const int num_packets = _arrivals.sample();
 	int count = 0;
 	while ( count < num_packets )
 	{
 		Packet p(_flow_id, _tick);
-		_flow_queue.push(p);
+		pkt_vector.push_back( p );
 		count++;
 	}
+	return pkt_vector;
 }

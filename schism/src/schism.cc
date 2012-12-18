@@ -26,7 +26,7 @@ int main( int argc, char* argv[] )
 		fprintf(stderr,"Using rate %f \n",rate);
 		SlottedSender* next_sender = new SlottedSender( i, rate, seed );
 		sender_list.push_back( next_sender );
-		rr_scheduler->add_sender( next_sender, 1 );
+		rr_scheduler->add_sender( 1 );
 	}
 	/* Create Link and attach scheduler */
 	SlottedLink link( rr_scheduler );
@@ -35,9 +35,12 @@ int main( int argc, char* argv[] )
 	for ( current_tick=0; current_tick < 1000000; current_tick++ )
 	{
 		link.tick(current_tick);
+		std::vector<Packet> new_pkts;
 		for (i=0; i<N; i++)
 		{
-			sender_list.at(i)->tick(current_tick);
+			std::vector<Packet> pkts = sender_list.at(i)->tick( current_tick );
+			new_pkts.insert( new_pkts.end(), pkts.begin(), pkts.end() );
 		}
+		rr_scheduler->tick( current_tick, new_pkts );
 	}
 }
