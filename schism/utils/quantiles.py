@@ -4,7 +4,7 @@ fh=sys.stdin
 delay_list=[]
 for line in fh.readlines() :
 	line.strip();
-	if len(line.split()) < 4 :
+	if len(line.split()) < 12 :
 		continue;
 	flow_id=int(line.split()[8])
 	if flow_id == int(sys.argv[1]) :

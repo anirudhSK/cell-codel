@@ -1,0 +1,30 @@
+Ran the same experiments as Dec16, with a VirtualClock scheduler instead of a  Round Robin scheduler.
+
+Plots are here :
+============================================================================
+
+web.mit.edu/anirudh/www/plots/delays-vc-fixed.pdf     : Delays for VClock with equal average packet intervals (VC)
+web.mit.edu/anirudh/www/plots/delays-vc-dynamic.pdf   : Delays for VClock with average packet intervals set to the inverse of the rate. (DVC)
+web.mit.edu/anirudh/www/plots/fairness-vc-fixed.pdf   : Delays for VC
+web.mit.edu/anirudh/www/plots/fairness-vc-dynamic.pdf : Fairness for DVC
+
+The results for VC are qualitatively similar to RR, but the transition is much steeper (around the 0.5 packets per tick mark).
+
+The results for DVC are actually worse than the results for WRR especially when the rates across the two flows are very different (0.7-0.29, 0.8-0.19 and so on). This is explained in the VirtualClock paper as well : We 'll call this problem "clock leapfrogging" :
+<pre>
+The different throughput rates of the flows do have a minor impact on the
+average queueing delay though; lower throughput flows
+seem to experience a higher queueing delay. This is
+because their VirtualClocks tick by bigger steps; one
+packet arrival may advance the VirtualClock so much
+that the next packet has to wait to let one or more packets
+from higher-speed flows, which arrived in a burst,
+pass by first.
+</pre>
+
+To be fair to VirtualClock, we did pick the weights on WRR to obtain the best quantum slice, i.e to reduce it to its simplest form. This can get progressively harder as the number of flows increase.
+
+Conclusion :
+
+Setting weights proportional to the ingress rates doesn't seem to be a sensible idea because it suffers from either  leapfrogging, or quantum slice selection issues. On the other hand, simply setting the same weight across all flows is grossly unfair to the higher throughput flow in terms of delay. Hopefully, we can flatten the fairness curve from naive RR and VC without making the delays worse for everyone.
+
