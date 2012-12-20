@@ -29,7 +29,7 @@ int main( int argc, char* argv[] )
 		rr_scheduler->add_sender( 1 );
 	}
 	/* Create Link and attach scheduler */
-	SlottedLink link( rr_scheduler );
+	SlottedLink link( rr_scheduler, seed );
 	
 	uint64_t current_tick=0;
 	for ( current_tick=0; current_tick < 1000000; current_tick++ )

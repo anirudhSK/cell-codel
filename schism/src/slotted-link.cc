@@ -1,12 +1,10 @@
 #include "slotted-link.hh"
-#include <fstream>
-#include <assert.h>
 
-SlottedLink::SlottedLink( RRScheduler* scheduler) :
+SlottedLink::SlottedLink( RRScheduler* scheduler, int seed ) :
 	_tick( 0 ),
-	_scheduler( scheduler )
+	_scheduler( scheduler ),
+	_pdos( Poisson ( 1, seed ) )
 {}
-
 
 void SlottedLink::tick( uint64_t current_tick )
 {
