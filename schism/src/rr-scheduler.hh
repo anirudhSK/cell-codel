@@ -1,11 +1,12 @@
 #ifndef RR_SCHEDULER_HH
 #define RR_SCHEDULER_HH
 
+#include "scheduler.hh"
 #include "slotted-sender.hh"
 #include "packet.hh"
 
 /* Weighted Round Robin Scheduler */
-class RRScheduler
+class RRScheduler : public Scheduler
 {
 private :
 	/* References to senders */
@@ -17,7 +18,6 @@ private :
 	uint32_t _current_slot;
 	uint32_t _num_slots;
 
-	uint64_t _tick;
 public :
 	RRScheduler();
 	

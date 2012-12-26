@@ -2,12 +2,12 @@
 #include <algorithm>
 
 RRScheduler::RRScheduler() :
+	Scheduler(),
 	_num_flows(0),
 	_flow_queues( std::vector<std::queue<Packet>> () ),
 	_slot_schedule( std::vector<uint32_t>() ),
 	_current_slot( 0 ),
-	_num_slots( 0 ),
-	_tick( 0 )
+	_num_slots( 0 )
 {}
 
 void RRScheduler::add_sender( uint32_t weight )
