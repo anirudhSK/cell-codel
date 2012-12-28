@@ -1,0 +1,5 @@
+Ran more experiments with the FIFO scheduler. Confirmed (once again) that the FIFO scheduler guarantees equal distributions across all flows. The one nuisance is that the distribution of delays doesn't match up with the analytic predictions. I wonder why ? Maybe insufficient burn in ?
+
+Next steps :
+
+Run the system under congested conditions because the uncongested system doesn't have anything non obvious. Under uncongested conditions, FIFO is optimal, so a congested system is a better research problem.
