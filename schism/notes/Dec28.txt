@@ -3,3 +3,11 @@ Ran more experiments with the FIFO scheduler. Confirmed (once again) that the FI
 Next steps :
 
 Run the system under congested conditions because the uncongested system doesn't have anything non obvious. Under uncongested conditions, FIFO is optimal, so a congested system is a better research problem.
+
+Here's the setup (to clarify my thinking) :
+- When a group of flows are scheduled using weighted fair queuing, then their allocations (whether the system is congested or not), is weighted max-min fair.
+- This implies some flows are bottlenecked by the link (bottlenecked flows) and others aren't (free flows).
+- For the bottlenecked flows, we follow a CSFQ-style probabilistic dropping scheme to avoid tail drops.
+- For free flows, we try and control the weights on WFQ, to equalize the 99th percentile delays.
+- The analytic-simulation mismatch bug can be ignored for the most part, since the percentiles can be empirically estimated. So forget about it for now.
+- Finally, why do we even need WFQ ? Because FCFS is no longer a sensible solution under congested workloads. Having established that WFQ is indeed necessary, we need to tweak the weights on it to ensure equal 99th percentile delays for all flows (congested or not).
