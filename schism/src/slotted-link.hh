@@ -2,7 +2,7 @@
 #define SLOTTED_LINK
 
 #include <list>
-#include "rr-scheduler.hh"
+#include "scheduler.hh"
 #include "poisson.hh"
 
 /* Slotted work conserving link; sends one packet per time slot */
@@ -10,12 +10,12 @@ class SlottedLink
 {
 private :
 	uint64_t _tick;
-	RRScheduler * _scheduler;
+	Scheduler * _scheduler;
 	Poisson _pdos;
 
 
 public :
-	SlottedLink( RRScheduler * scheduler, int seed );
+	SlottedLink( Scheduler * scheduler, int seed );
 	
 	void tick( uint64_t current_tick );
 	

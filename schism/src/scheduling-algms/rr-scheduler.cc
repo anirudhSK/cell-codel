@@ -10,14 +10,14 @@ RRScheduler::RRScheduler() :
 	_num_slots( 0 )
 {}
 
-void RRScheduler::add_sender( uint32_t weight )
+void RRScheduler::add_sender( double weight )
 {
 	/* Add sender with specified weight */
 	assert ( weight >= 1 );
 	_flow_queues.push_back( std::queue<Packet>() );
-	_num_slots += weight ;
+	_num_slots += ( uint32_t )weight ;
 	_slot_schedule.push_back( _num_slots );
-	fprintf( stderr, "Adding flow %d with weight %d  \n", _num_flows, weight);
+	fprintf( stderr, "Adding flow %d with weight %d  \n", _num_flows, ( uint32_t ) weight);
 	_num_flows++;
 }
 

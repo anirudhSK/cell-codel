@@ -2,10 +2,11 @@
 #define FCFS_SCHEDULER_HH
 
 #include "../packet.hh"
+#include "../scheduler.hh"
 #include <queue>
 
 /* FCFS Scheduler */
-class FcfsScheduler
+class FcfsScheduler : public Scheduler
 {
 private :
 	std::queue<Packet> _flow_queue;
@@ -20,7 +21,7 @@ public :
 	
 	Packet dequeue();
 	
-	void enqueue( Packet p);
+	void enqueue( Packet p );
 };
 
 #endif

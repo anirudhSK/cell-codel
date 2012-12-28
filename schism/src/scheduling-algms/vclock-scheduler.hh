@@ -1,13 +1,14 @@
 #ifndef VCLOCK_SCHEDULER_HH
 #define VCLOCK_SCHEDULER_HH
 
+#include "../scheduler.hh"
 #include "../slotted-sender.hh"
 #include "../packet.hh"
 
 typedef std::tuple<Packet,double> TaggedPacket ;
 
 /* Virtual Clock Scheduler (Lixia Zhang 1989) */
-class VClockScheduler
+class VClockScheduler : public Scheduler
 {
 private :
 	/* Flow queues */
@@ -30,7 +31,7 @@ public :
 	
 	Packet dequeue( uint32_t flow_id );
 	
-	void enqueue( Packet p);
+	void enqueue( Packet p );
 };
 
 #endif

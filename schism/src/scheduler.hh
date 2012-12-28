@@ -16,7 +16,9 @@ public :
 	
 	virtual void tick( uint64_t current_tick, std::vector<Packet> new_pkts ) = 0;
 	
-	virtual void enqueue( Packet p) = 0;
+	virtual void enqueue( Packet p ) = 0;
+	
+	virtual void add_sender( double weight_coefficient ) { weight_coefficient += 0; };
 	
 	virtual ~Scheduler() {};
 };

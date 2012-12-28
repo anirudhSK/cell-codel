@@ -1,6 +1,6 @@
 #include "slotted-link.hh"
 
-SlottedLink::SlottedLink( RRScheduler* scheduler, int seed ) :
+SlottedLink::SlottedLink( Scheduler* scheduler, int seed ) :
 	_tick( 0 ),
 	_scheduler( scheduler ),
 	_pdos( Poisson ( 1, seed ) )

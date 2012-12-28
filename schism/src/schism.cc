@@ -1,6 +1,7 @@
 #include "slotted-link.hh"
 #include "slotted-sender.hh"
-#include "rr-scheduler.hh"
+#include "scheduler.hh"
+#include "scheduling-algms/rr-scheduler.hh"
 #include <stdlib.h>
 #include <assert.h>
 #include <fstream>
@@ -12,7 +13,7 @@ int main( int argc, char* argv[] )
 	bool skew = ( std::string(argv[2]) == "skew" ) ;
 	
 	/* RR Scheduler */
-	RRScheduler * rr_scheduler = new RRScheduler();
+	Scheduler * rr_scheduler = new RRScheduler();
 	
 	/* Next sender */
 	std::vector<SlottedSender *> sender_list;
@@ -26,7 +27,7 @@ int main( int argc, char* argv[] )
 		fprintf(stderr,"Using rate %f \n",rate);
 		SlottedSender* next_sender = new SlottedSender( i, rate, seed );
 		sender_list.push_back( next_sender );
-		rr_scheduler->add_sender( 1 );
+		rr_scheduler->add_sender( 1.0 );
 	}
 	/* Create Link and attach scheduler */
 	SlottedLink link( rr_scheduler, seed );
