@@ -60,7 +60,6 @@ Packet DRRScheduler::get_next_packet()
 		return p;
 	}
 	_current_flow = _active_list.front();
-	fprintf( stderr, "flow id is %u \n", _current_flow);
 	if ( _flow_credits.at ( _current_flow ) < pkt_size ) { /* do not add until you deplete credits */
 		_flow_credits.at( _current_flow ) += _flow_quantums.at( _current_flow );
 	}
