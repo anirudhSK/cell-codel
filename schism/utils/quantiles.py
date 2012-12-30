@@ -18,3 +18,4 @@ print>>sys.stderr,"median ",delay_list[int(0.50*len(delay_list))]
 print>>sys.stderr,"95th percentile ",delay_list[int(0.95*len(delay_list))]
 print>>sys.stderr,"99th percentile ",delay_list[int(0.99*len(delay_list))]
 print>>sys.stderr,"max ",delay_list[-1]
+print>>sys.stderr,"length,",len(delay_list)
