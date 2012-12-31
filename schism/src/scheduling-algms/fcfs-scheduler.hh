@@ -10,7 +10,6 @@ class FcfsScheduler : public Scheduler
 {
 private :
 	std::queue<Packet> _flow_queue;
-	uint64_t _tick;
 
 public :
 	FcfsScheduler();
