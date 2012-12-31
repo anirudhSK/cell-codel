@@ -3,8 +3,8 @@
 #include <assert.h>
 
 FcfsScheduler::FcfsScheduler() :
-	_flow_queue( std::queue<Packet> () ),
-	_tick( 0 )
+	Scheduler(),
+	_flow_queue( std::queue<Packet> () )
 {}
 
 void FcfsScheduler::tick( uint64_t current_tick, std::vector<Packet> new_pkts )
