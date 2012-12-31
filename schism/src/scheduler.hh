@@ -18,7 +18,7 @@ public :
 	
 	virtual void enqueue( Packet p ) = 0;
 	
-	virtual void add_sender( double weight_coefficient ) { weight_coefficient += 0; };
+	virtual void add_sender( double weight_coefficient ) { fprintf( stderr, "Dummy placeholder for add_sender \n" ); weight_coefficient += 0; };
 	
 	virtual ~Scheduler() {};
 };
