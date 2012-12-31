@@ -1,11 +1,18 @@
 #! /usr/bin/python
 # Calculate weighted max min fair allocations
 
+import copy
 # INPUT : Desired Rates, Weights, capacity
 desired={0:0.036000 , 1:0.072, 2:0.108, 3:0.144, 4:0.18, 5:0.216,6:0.252,7:0.288, 8:0.324,9:0.36}
 for user in desired :
 	desired[user] *=1000715
-weights={0:1,1:1,2:1,3:1,4:1,5:1,6:1,7:1,8:1,9:1}
+weights={0:1.0,1:2.0,2:3.0,3:4.0,4:5.0,5:6.0,6:7.0,7:8.0,8:9.0,9:10.0}
+for weight in weights :
+	weights[weight]**=(+0.5);
+norm_factor=sum(weights.values())
+for weight in weights :
+	weights[weight]/=norm_factor
+weight_copy=copy.deepcopy(weights)
 total_capacity=1000715
 
 # OUTPUT: Allocations.
@@ -38,9 +45,15 @@ while  ( len(weights) > 0 ) and ( capacity > 0 ) :
 for share in current_share :
 	final_share[share]=current_share[share]
 
-#print
-print "desired", desired
-print "allocated", final_share
+# print
+for share in final_share :
+	bottleneck=True
+	if final_share[share] == desired[share] :
+		bottleneck=False
+	print "user ", share,"weight %.5f"%weight_copy[share],"desired %7.0f"%desired[share],"allocated %7.0f"%final_share[share]," bottleneck ",bottleneck
+
+# aggregate stats
+print "=============TOTAL STATS===================="
 print "capacity", total_capacity
 print "demand", sum(desired.values())
 print "amount allocated", sum(final_share.values())
