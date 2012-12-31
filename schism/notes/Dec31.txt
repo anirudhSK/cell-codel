@@ -1,0 +1,16 @@
+This is a summary of the last few days of work, so let's see where we stand :
+
+The list below is more or less obvious, but summarises whatever I have understood so far.
+
+1. VirtualClock : Nice algorithm overall but suffers from clock leapfrogging as documented in the original paper, where higher priority flows incur much smaller delays.
+2. VirtualClock isn't memoryless either : If a flow consumes spare capacity when other flows are inactive, it gets victimised when other flows become active.
+3. Weighted Round Robin: Nice solution but depends heavily on the specific weights that we pick. In other words 4:6 is different from 2:3.
+4. Deficit Round Robin: Much simpler solution where quantum sizes can be arbitrary. But starts suffering when weights are arbitrarily large. To be fair, I picked amazingly large weights (larger than the simulation duration), where things aren't expected to perform well anyway.
+5. All forms of weighted fair queuing (whether it be VirtualClock, DRR, Packet GPS) all guarantee weighted max min fair allocations, which are easy to calculate. The results for DRR seem to match the weighted max min fair allocations very closely so long as the weights aren't arbitrarily large.
+6. The delay distributions under FCFS have a closed form but unfortunately my simulations don't seem to match that.
+
+Now, the interesting stuff :
+
+1. FCFS is more than sufficient for uncongested scenarios. It guarantees max min fair allocations and equal delay distributions for any arrival profile.
+2. For congested scenarios, the answer isn't clear at all. Weighted Round Robin needs a weight setting so that it guarantees the right throughput allocations and delay distributions. Setting these weights is hard since they need to be tuned to the arrival rates.
+3. Our current approach is tail scheduling : pick the flow with the longest tail delay so far. The obvious question is how you measure this tail delay. My first attempt at solving this problem have gotten nowhere, but we at least know what we are searching for roughly.
