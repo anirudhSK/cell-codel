@@ -64,6 +64,6 @@ void TailScheduler::enqueue( Packet p )
 int64_t TailScheduler::get_tail_delay( std::vector<Packet> history )
 {
 	uint32_t location = (uint32_t) (0.95 * (double) history.size());
-	std::sort( history.begin(), history.end(), [&] (const Packet & p1, const Packet & p2) { return p1._delay < p2._delay; } );
+	std::nth_element( history.begin(), history.begin() + location, history.end(), [&] (const Packet & p1, const Packet & p2) { return p1._delay < p2._delay; } );
 	return ( history.empty() ) ? 0 : history.at( location )._delay;
 }
