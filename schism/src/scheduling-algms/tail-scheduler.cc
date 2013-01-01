@@ -49,7 +49,8 @@ Packet TailScheduler::dequeue( uint32_t flow_id )
 
 	/* update history and purge old packets */
 	_history.at( flow_id ).push_back( to_send );
-	std::remove_if( _history.at( flow_id ).begin(), _history.at( flow_id ).end(), [&] ( const Packet & x ) { return x._delivered < _tick - WINDOW_DURATION; } );
+	_history.at( flow_id ).erase( std::remove_if( _history.at( flow_id ).begin(), _history.at( flow_id ).end(), [&] ( const Packet & x ) { return x._delivered < _tick - WINDOW_DURATION; } ), 
+               _history.at( flow_id ).end());
 
 	return to_send;
 }
@@ -62,6 +63,7 @@ void TailScheduler::enqueue( Packet p )
 
 int64_t TailScheduler::get_tail_delay( std::vector<Packet> history )
 {
+	uint32_t location = (uint32_t) (0.95 * (double) history.size());
 	std::sort( history.begin(), history.end(), [&] (const Packet & p1, const Packet & p2) { return p1._delay < p2._delay; } );
-	return ( history.empty() ) ? 0 : history.at( 0.95 * (double)history.size() )._delay;
+	return ( history.empty() ) ? 0 : history.at( location )._delay;
 }
