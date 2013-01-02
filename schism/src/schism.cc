@@ -10,8 +10,8 @@ int main( int argc, char* argv[] )
 	int seed  = atoi( argv[1] );
 	bool skew = ( std::string(argv[2]) == "skew" ) ;
 	
-	/* RR Scheduler */
-	Scheduler * rr_scheduler = new RRScheduler();
+	/* Pick a Scheduler */
+	Scheduler * scheduler = new RRScheduler();
 	
 	/* Next sender */
 	std::vector<SlottedSender *> sender_list;
@@ -25,10 +25,10 @@ int main( int argc, char* argv[] )
 		fprintf(stderr,"Using rate %f \n",rate);
 		SlottedSender* next_sender = new SlottedSender( i, rate, seed );
 		sender_list.push_back( next_sender );
-		rr_scheduler->add_sender( 1.0 );
+		scheduler->add_sender( 1.0 );
 	}
 	/* Create Link and attach scheduler */
-	SlottedLink link( rr_scheduler, seed );
+	SlottedLink link( scheduler, seed );
 	
 	uint64_t current_tick=0;
 	for ( current_tick=0; current_tick < 1000000; current_tick++ )
@@ -40,6 +40,6 @@ int main( int argc, char* argv[] )
 			std::vector<Packet> pkts = sender_list.at(i)->tick( current_tick );
 			new_pkts.insert( new_pkts.end(), pkts.begin(), pkts.end() );
 		}
-		rr_scheduler->tick( current_tick, new_pkts );
+		scheduler->tick( current_tick, new_pkts );
 	}
 }
