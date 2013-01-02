@@ -1,0 +1,15 @@
+Tail Scheduling:
+=========================
+
+The idea is to factor the delay distribution for each flow into 2 parts :
+
+(1) The delay distribution of packets that have already been delivered in the "recent past". This is already implemented.
+(2) A proxy for the delay distribution of packets that are currently in the queue. For this, my current technique is :
+---Use Lindley's recursion for waiting times of packets.
+---As a base case, start with the head of line (HOL) packet and accurately measure its delay I so far (i.e current_time - pkt.timestamp)
+---Now, add to I, the service time S for the HOL packet (which we estimate on a per flow basis, using some history).
+---I+S gives us W(0), the base case in the recurrence.
+---Apply Lindley's recurrence using S(n) = S for all packets in the queue. For T(n), the interarrival time, use the packet timestamps to accurately measure T(n) as (p1.timestamp - p2.timestamp) for 2 adjacent packets p1 and p2.
+---Once you do this for all packets in the queue, you have the delay distribution.
+
+Combine the answers to (1) and (2). This is a simple application of Bayes Rule : p(x|Delivered)*p(Delivered) + p(x|Queued)*p(Queued). For p(Queued) and p(Delivered) we divide the number of packets in the queue (respectively in the history) by the sum of packets in the queue and in the history.

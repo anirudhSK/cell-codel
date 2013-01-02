@@ -49,7 +49,7 @@ Packet TailScheduler::dequeue( uint32_t flow_id )
 
 	/* update history and purge old packets */
 	_history.at( flow_id ).push_back( to_send );
-	_history.at( flow_id ).erase( std::remove_if( _history.at( flow_id ).begin(), _history.at( flow_id ).end(), [&] ( const Packet & x ) { return x._delivered < _tick - WINDOW_DURATION; } ), 
+	_history.at( flow_id ).erase( std::remove_if( _history.at( flow_id ).begin(), _history.at( flow_id ).end(), [&] ( const Packet & x ) { return x._delivered < _tick - WINDOW_DURATION; } ),
                _history.at( flow_id ).end());
 
 	return to_send;
