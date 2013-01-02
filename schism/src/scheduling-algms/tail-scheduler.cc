@@ -23,6 +23,7 @@ Packet TailScheduler::get_next_packet()
 			continue;
 		}
 		int64_t current_tail = get_tail_delay( _history.at( i ), i );
+		assert( current_tail >= 0 );
 		if ( current_tail >= max_tail ) {
 			max_tail = current_tail;
 			max_arg  = i;
@@ -50,7 +51,7 @@ Packet TailScheduler::dequeue( uint32_t flow_id )
 	/* update history and purge old packets */
 	_history.at( flow_id ).push_back( to_send );
 	_history.at( flow_id ).erase( std::remove_if(_history.at( flow_id ).begin(), _history.at( flow_id ).end(),
-	                                             [&] ( const Packet & x ) { return x._delivered < _tick - WINDOW_DURATION; } ),
+	                                             [&] ( const Packet & x ) { return ( int64_t ) x._delivered < ( int64_t ) _tick - ( int64_t ) WINDOW_DURATION; } ),
 	                              _history.at( flow_id ).end());
 
 	return to_send;
