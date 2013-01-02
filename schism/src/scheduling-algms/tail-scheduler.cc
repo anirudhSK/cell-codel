@@ -22,7 +22,7 @@ Packet TailScheduler::get_next_packet()
 		if ( _flow_queues.at( i ). empty() ) {
 			continue;
 		}
-		int64_t current_tail = get_tail_delay( _history.at( i ) );
+		int64_t current_tail = get_tail_delay( _history.at( i ), i );
 		if ( current_tail >= max_tail ) {
 			max_tail = current_tail;
 			max_arg  = i;
@@ -49,8 +49,9 @@ Packet TailScheduler::dequeue( uint32_t flow_id )
 
 	/* update history and purge old packets */
 	_history.at( flow_id ).push_back( to_send );
-	_history.at( flow_id ).erase( std::remove_if( _history.at( flow_id ).begin(), _history.at( flow_id ).end(), [&] ( const Packet & x ) { return x._delivered < _tick - WINDOW_DURATION; } ),
-               _history.at( flow_id ).end());
+	_history.at( flow_id ).erase( std::remove_if(_history.at( flow_id ).begin(), _history.at( flow_id ).end(),
+	                                             [&] ( const Packet & x ) { return x._delivered < _tick - WINDOW_DURATION; } ),
+	                              _history.at( flow_id ).end());
 
 	return to_send;
 }
@@ -61,9 +62,24 @@ void TailScheduler::enqueue( Packet p )
 	_flow_queues.at( flow_id ).push( p );
 }
 
-int64_t TailScheduler::get_tail_delay( std::vector<Packet> history )
+int64_t TailScheduler::get_tail_delay( std::vector<Packet> history, uint32_t flow_id )
 {
-	uint32_t location = (uint32_t) (0.95 * (double) history.size());
-	std::nth_element( history.begin(), history.begin() + location, history.end(), [&] (const Packet & p1, const Packet & p2) { return p1._delay < p2._delay; } );
-	return ( history.empty() ) ? 0 : history.at( location )._delay;
+	/* Estimate delays of packets in queue */
+	QdelayEstimator estimator( _flow_queues.at( flow_id ), service_time() );
+
+	/* Compute delays from history */
+	std::vector<uint64_t> historic_delays( history.size() );
+	std::transform( history.begin(), history.end(), historic_delays.begin(),
+	                [&] (const Packet & p)
+	                { return p._delivered - p._tick;} );
+
+	/*Estimate both distributions */
+	Distribution queue_dist ( estimator.estimate_delays( _tick ) );
+	Distribution history_dist( historic_delays );
+
+	/* Compose the two */
+	Distribution composed = history_dist.compose( queue_dist );
+
+	/* Get quantile */
+	return composed.quantile( 0.95 );
 }

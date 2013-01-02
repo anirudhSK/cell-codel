@@ -4,6 +4,8 @@
 #include "../slotted-sender.hh"
 #include "../packet.hh"
 #include "../scheduler.hh"
+#include "../distribution.hh"
+#include "qdelay-estimator.hh"
 
 /* Tail Scheduler (Largest 95th percentile first) */
 class TailScheduler : public Scheduler
@@ -27,7 +29,9 @@ public :
 	
 	void enqueue( Packet p);
 	
-	int64_t get_tail_delay( std::vector<Packet> history );
+	int64_t get_tail_delay( std::vector<Packet> history, uint32_t flow_id );
+	
+	uint64_t service_time() { return 1; /* TODO: Fix this */ }
 };
 
 #endif
