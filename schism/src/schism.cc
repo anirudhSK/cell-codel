@@ -2,9 +2,7 @@
 #include "slotted-sender.hh"
 #include "scheduler.hh"
 #include "scheduling-algms/rr-scheduler.hh"
-#include <stdlib.h>
 #include <assert.h>
-#include <fstream>
 
 int main( int argc, char* argv[] )
 {

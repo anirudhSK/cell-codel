@@ -1,7 +1,4 @@
 #include "slotted-sender.hh"
-#include <stdlib.h>
-#include <fstream>
-#include "assert.h"
 
 SlottedSender::SlottedSender( int32_t flow_id, double rate, int seed ) :
 	_flow_id( flow_id ),

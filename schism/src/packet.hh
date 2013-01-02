@@ -1,6 +1,6 @@
 #ifndef PACKET_HH
 #define PACKET_HH
-#include<stdlib.h>
+
 #include<stdint.h>
 
 class Packet

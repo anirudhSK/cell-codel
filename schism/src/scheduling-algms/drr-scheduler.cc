@@ -1,6 +1,5 @@
 #include "drr-scheduler.hh"
 #include <algorithm>
-#include <queue>
 
 DRRScheduler::DRRScheduler() :
 	Scheduler(),

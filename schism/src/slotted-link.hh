@@ -1,7 +1,6 @@
 #ifndef SLOTTED_LINK_HH
 #define SLOTTED_LINK
 
-#include <list>
 #include "scheduler.hh"
 #include "poisson.hh"
 
