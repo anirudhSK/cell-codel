@@ -29,6 +29,11 @@ Packet TailScheduler::get_next_packet()
 			max_arg  = i;
 		}
 	}
+	/* Ensure scheduler is work conserving */
+	if( std::find_if( _flow_queues.begin(), _flow_queues.end(), [&] (const std::queue<Packet> & flow) { return !flow.empty();} ) != _flow_queues.end() ) {
+		assert (max_arg != _flow_queues.size());
+	}
+
 	return ( max_arg == _flow_queues.size() ) ? Packet( -1,-1) : dequeue( max_arg );
 }
 
@@ -44,7 +49,7 @@ Packet TailScheduler::dequeue( uint32_t flow_id )
 	Packet to_send = _flow_queues.at( flow_id ).front();
 	_flow_queues.at( flow_id ).pop();
 	int64_t delay = _tick - to_send._tick;
-	fprintf( stderr, "Sent packet out at %lu , from flow %u with delay %ld, queue size is %lu \n", _tick, flow_id, delay, _flow_queues.at( flow_id ).size() );
+	fprintf( stderr, "seqnum %lu delay %ld flowid %u tick %lu queue %lu\n", to_send._seq_num, delay, flow_id, delay, _flow_queues.at( flow_id ).size() );
 	to_send._delivered = _tick;
 	to_send._delay     = delay;
 
