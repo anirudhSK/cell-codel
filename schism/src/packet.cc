@@ -1,5 +1,9 @@
 #include "packet.hh"
+
+uint64_t Packet::current_seq_num = 0;
+
 Packet::Packet( uint32_t flow_id, uint64_t tick) :
+	_seq_num( ++current_seq_num ),
 	_flow_id( flow_id ),
 	_size( 1 ),
 	_tick( tick ),
