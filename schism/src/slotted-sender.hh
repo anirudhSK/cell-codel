@@ -4,6 +4,7 @@
 #include <queue>
 #include "packet.hh"
 #include "poisson.hh"
+#include "uniform.hh"
 
 class SlottedSender
 {
@@ -12,6 +13,9 @@ private :
 	double _rate;
 	uint64_t _tick;
 	Poisson _arrivals;
+	Uniform _batch_size;
+	int _seed;
+	int _current_batch;
 	
 public :
 	SlottedSender( int32_t flow_id, double rate, int seed ) ;
