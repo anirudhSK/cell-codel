@@ -11,7 +11,6 @@ private :
 	uint32_t _flow_id;
 	double _rate;
 	uint64_t _tick;
-	std::queue<Packet> _flow_queue;
 	Poisson _arrivals;
 	
 public :

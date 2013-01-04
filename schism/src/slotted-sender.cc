@@ -4,7 +4,6 @@ SlottedSender::SlottedSender( int32_t flow_id, double rate, int seed ) :
 	_flow_id( flow_id ),
 	_rate( rate ),
 	_tick( 0 ),
-	_flow_queue( std::queue<Packet>() ),
 	_arrivals( Poisson ( rate, seed ) )
 {}
 
