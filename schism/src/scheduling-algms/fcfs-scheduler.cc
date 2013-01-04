@@ -24,7 +24,7 @@ Packet FcfsScheduler::dequeue()
 	Packet to_send = _flow_queue.front();
 	_flow_queue.pop();
 	int64_t delay = _tick - to_send._tick;
-	fprintf( stderr, "Sent packet out at %lu , from flow %u with delay %ld, queue size is %lu \n", _tick, to_send._flow_id, delay, _flow_queue.size() );
+	fprintf( stderr, "seqnum %lu delay %ld flowid %u tick %lu queue %lu\n", to_send._seq_num, delay, to_send._flow_id, _tick, _flow_queue.size() );
 	return to_send;
 }
 
