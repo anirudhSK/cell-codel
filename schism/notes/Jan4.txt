@@ -1,0 +1,9 @@
+Ok, I ran some tests to check (hopefully for good) how M/M/1 simulations compare to mathmetical predictions. I think I finally nailed it. The discrepancy between simulations and analysis was due to a short simulation duration. markov-match.pdf shows a graph of delay distributions with progressively larger simulation duration for an M/M/1 queue under FCFS. As the ticks increase, the simulation distributions approach the analytical prediction.
+
+So, in conclusion :
+
+(1) I think the simulation matches analysis pretty well so long as the utilisation is high (implying delays are large). Assume a fixed egress rate of 1 pkt per tick. When the utilization is low, the delays are low because several packets are probably serviced well within a random service time because there is very little queueing delay. Hence there might be several sub 1 tick delays in continous time (since the average service time is 1 tick). These delays will all be rounded off either to 0 or 1 in a tick-based simulation. As the delays increase with higher utilization, the probability of sub one tick delays goes down substantially. It is in this sub one tick regime where continuous time markov chains and their tick-based simulations diverge. For high utilizations, I think there is a good match.
+
+(2) I initially thought the delays were because a tick based simulation is inaccurate because the tick size may be comparable to the mean inter arrival times / mean service time. I think this isn't correct. So long as the measured delays are much more than 1 tick (i.e. high utilization), I think it's irrelevant what the tick size is.
+
+FWIW, I think it's sensible to simply stick with tick based simulations for now, without switching to a more complex priority queue based implementation.
