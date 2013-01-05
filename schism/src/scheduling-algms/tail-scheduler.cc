@@ -71,7 +71,7 @@ void TailScheduler::enqueue( Packet p )
 int64_t TailScheduler::get_tail_delay( std::vector<Packet> history, uint32_t flow_id )
 {
 	/* Estimate delays of packets in queue */
-	QdelayEstimator estimator( _flow_queues.at( flow_id ), service_time() );
+	QdelayEstimator estimator( _flow_queues.at( flow_id ), service_time( flow_id ) );
 
 	/* Compute delays from history */
 	std::vector<uint64_t> historic_delays( history.size() );
@@ -88,4 +88,15 @@ int64_t TailScheduler::get_tail_delay( std::vector<Packet> history, uint32_t flo
 
 	/* Get quantile */
 	return composed.quantile( 0.95 );
+}
+
+uint64_t TailScheduler::service_time( uint32_t flow_id )
+{
+	/* Get mean inter departure time for all packets in history */
+	auto flow_hist = _history.at( flow_id );
+	uint64_t sum = 0;
+	for ( uint32_t i=1; i < flow_hist.size(); i++ ) {
+		sum += flow_hist.at( i )._delivered - flow_hist.at( i-1 )._delivered;
+	}
+	return ( flow_hist.size() >=2 ) ? sum/(flow_hist.size() - 1) : 1 ;
 }

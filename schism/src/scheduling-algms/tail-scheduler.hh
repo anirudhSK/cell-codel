@@ -31,7 +31,7 @@ public :
 	
 	int64_t get_tail_delay( std::vector<Packet> history, uint32_t flow_id );
 	
-	uint64_t service_time() { return 1; /* TODO: Fix this */ }
+	uint64_t service_time( uint32_t flow_id );
 };
 
 #endif
