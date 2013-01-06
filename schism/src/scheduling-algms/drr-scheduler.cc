@@ -20,7 +20,7 @@ void DRRScheduler::add_sender( double weight )
 	_flow_credits.push_back( 0 );
 	_flow_quantums.push_back( weight );
 	_active_indicator.push_back( false );
-	fprintf( stderr, "Adding flow %d with weight %f  \n", _num_flows, weight);
+	fprintf( stderr, "DRR: Adding flow %d with weight %f  \n", _num_flows, weight);
 	_num_flows++;
 }
 

@@ -12,6 +12,7 @@ void TailScheduler::add_sender( double weight )
 	_flow_queues.push_back( std::queue<Packet>() );
 	_history.push_back( std::vector<Packet>() );
 	weight = weight + 1; /* dummy variable for TailScheduler */
+	fprintf( stderr, "TailScheduler: Adding sender \n");
 }
 
 Packet TailScheduler::get_next_packet()
