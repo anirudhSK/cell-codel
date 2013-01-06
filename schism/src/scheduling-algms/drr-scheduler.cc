@@ -47,7 +47,7 @@ Packet DRRScheduler::dequeue( uint32_t flow_id )
 	Packet to_send = _flow_queues.at( flow_id ).front();
 	_flow_queues.at( flow_id ).pop();
 	int64_t delay = _tick - to_send._tick;
-	fprintf( stderr, "Sent packet out at %lu , from flow %u with delay %ld, queue size is %lu \n", _tick, flow_id, delay, _flow_queues.at( flow_id ).size() );
+	fprintf( stderr, "seqnum %lu delay %ld flowid %u tick %lu queue %lu\n", to_send._seq_num, delay, flow_id, _tick, _flow_queues.at( flow_id ).size() );
 	return to_send;
 }
 
