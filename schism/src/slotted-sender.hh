@@ -18,7 +18,7 @@ private :
 	int _current_batch;
 	
 public :
-	SlottedSender( int32_t flow_id, double rate, int seed ) ;
+	SlottedSender( int32_t flow_id, double rate, int seed, int batch_size ) ;
 	
 	std::vector<Packet> tick( uint64_t current_tick );
 	

@@ -18,12 +18,13 @@ int main( int argc, char* argv[] )
 
 	/* pick 10 senders */
 	int N = 10;
+	int batch_size = 1;
 	int i = 0;
 	for ( i=0; i<N; i++ )
 	{
 		float rate = skew ?  (i*0.99/45.0) + 1e-30 :  0.099 + 1e-30;
 		fprintf(stderr,"Using rate %f \n",rate);
-		SlottedSender* next_sender = new SlottedSender( i, rate, seed );
+		SlottedSender* next_sender = new SlottedSender( i, rate, seed, batch_size );
 		sender_list.push_back( next_sender );
 		scheduler->add_sender( 1.0 );
 	}

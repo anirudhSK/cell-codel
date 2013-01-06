@@ -1,14 +1,16 @@
 #include "slotted-sender.hh"
 
-SlottedSender::SlottedSender( int32_t flow_id, double rate, int seed ) :
+SlottedSender::SlottedSender( int32_t flow_id, double rate, int seed, int batch_size ) :
 	_flow_id( flow_id ),
 	_rate( rate ),
 	_tick( 0 ),
 	_arrivals( Poisson( rate, seed ) ),
-	_batch_size( Uniform( 10, seed ) ),
+	_batch_size( Uniform( batch_size, seed ) ),
 	_seed( seed ),
 	_current_batch( 1 )
-{}
+{
+	fprintf( stderr, "Batch size is %d \n", batch_size );
+}
 
 std::vector<Packet> SlottedSender::tick( uint64_t current_tick )
 {
