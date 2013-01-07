@@ -1,0 +1,22 @@
+I ran more focused experiments to see how tail delays are affected by the scheduling discipline. Here's what I did, specifically :
+
+The parameter setting for the experiment was a max. burst size of 100 (bursts are picked uniformly from 1 through 100), and an ingress rate of 0.99 in aggregate, spread out uniformly over 500 users.
+
+Here are the violating fractions (i.e. the fraction of packets in a flow that exceed a target threshold for various thresholds : 50, 100, 200, 500, 1000, and 2000 ticks ) :-
+FCFS:  50: 97.9 to 99.0 %, 100: 96.0 to 98.0 %, 200: 92.6 to 95.5 %, 500: 83.8 to 88.3 %, 1000: 71.3 to 76.5 %, 2000: 53.2 to 59.7 %
+DRR:   50: 94.5 to 95.8 %, 100: 90.0 to 91.9 %, 200: 82.9 to 85.7 %, 500: 69.5 to 73.7 %, 1000: 55.9 to 61.2 %, 2000: 40.3 to 46.1 %
+Tail:  50: 85.2 to 88.4 %, 100: 81.2 to 85.2 %, 200: 77.7 to 82.2 %, 500: 70.7 to 75.9 %, 1000: 61.0 to 66.5 %, 2000: 47.2 to 53.1 %
+
+We want the violating fractions to be low at every threshold.
+
+Conclusions:
+The best scheduling discipline (measured by low violating fractions and low spread in violating fractions across flows) seems to depend on our threshold setting. For different threshold settings, different scheduling disciplines seem to do well. For instance, for thresholds 50,100 and 200, TailScheduling has the lowest violating fractions among all 3. In contrast, for thresholds 500,1000, and 2000, DRR seems to win. We would ideally want low violating fractions AND low violating fraction spread at all thresholds.
+
+The spread itself might be a red herring because you may not even intuitively expect a spread if all users are IID, like is the case now. If different users have different characteristics (i.e. different rates, burst sizes etc), a spread might be more expected. Anyway, these results are a little encouraging for TailScheduling because at least at some thresholds it seems to be the best scheme.
+
+These might also suggest that the optimal scheme in terms of minimising tail delay might easily depend on the traffic type. This is what the "Tails in Scheduling" paper suggests anyway.
+
+Next steps :
+1. Improve Queuing Delay Estimator for TailScheduler.
+2. Try varying the amount of history for TailScheduler.
+
