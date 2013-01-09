@@ -20,3 +20,9 @@ Next steps :
 1. Improve Queuing Delay Estimator for TailScheduler.
 2. Try varying the amount of history for TailScheduler.
 
+Correction :
+
+Ok, my older results for Tail Scheduling (commit : 570acde4488dcd6b68a1b7487b4f4f602776ae64 )  are woefully wrong and misleading. . It looks like, in the tail, FCFS does better than both DRR and TailScheduling. This happens both for a vanilla Poisson process and a bursty one with burst size 100. This was a simple 100000 tick simulation, and I plotted the aggregate distributions, because it turns out there is very little difference on a per flow basis. This is because all flows are generated from the same random process anyway.
+
+The current results seem to indicate that FCFS does worse because we picked the wrong thresholds. If we pick the right ones (i.e. really long delays), then FCFS does better.
+
