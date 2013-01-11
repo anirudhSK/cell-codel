@@ -54,11 +54,11 @@ private:
 
   /* Main codel routines */
   dodeque_result dodeque ( uint64_t now );
-  DelayedPacket deque ( uint64_t now );
   void drop ( DelayedPacket p);
 
 public:
   CoDel( std::queue<Packet> & flow_queue, uint32_t flow_id );
+  DelayedPacket deque ( uint64_t now );
 
 };
 #endif
