@@ -23,7 +23,7 @@ void DRRScheduler::add_sender( double weight )
 	_flow_quantums.push_back( weight );
 	_active_indicator.push_back( false );
 	if ( _codel_enabled ) {
-		_codel_servo_bank.push_back( CoDel( _flow_queues.at( _num_flows ), _num_flows ) );
+		_codel_servo_bank.push_back( CoDel( &(_flow_queues.at( _num_flows )), _num_flows ) );
 	}
 	fprintf( stderr, "DRR: Adding flow %d with weight %f  \n", _num_flows, weight);
 	_num_flows++;
@@ -55,6 +55,9 @@ Packet DRRScheduler::dequeue( uint32_t flow_id )
 			Packet to_send = packet.contents;
 			int64_t delay = _tick - to_send._tick;
 			fprintf( stderr, "seqnum %lu delay %ld flowid %u tick %lu queue %lu\n", to_send._seq_num, delay, flow_id, _tick, _flow_queues.at( flow_id ).size() );
+			return to_send;
+		} else {
+			return Packet( -1, -1 );
 		}
 	}
 	Packet to_send = _flow_queues.at( flow_id ).front();
