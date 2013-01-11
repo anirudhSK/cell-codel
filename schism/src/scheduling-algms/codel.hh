@@ -31,7 +31,7 @@ private:
   } dodeque_result; 
 
   /* Flow Queue that Codel is tracking */
-  std::queue<Packet> _flow_queue;
+  std::queue<Packet>* _flow_queue;
   uint32_t _flow_id;
 
   /* Codel - specific parameters */
@@ -57,7 +57,7 @@ private:
   void drop ( DelayedPacket p);
 
 public:
-  CoDel( std::queue<Packet> & flow_queue, uint32_t flow_id );
+  CoDel( std::queue<Packet>* flow_queue, uint32_t flow_id );
   DelayedPacket deque ( uint64_t now );
 
 };

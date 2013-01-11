@@ -1,6 +1,6 @@
 #include "codel.hh"
 
-CoDel::CoDel( std::queue<Packet> & flow_queue, uint32_t flow_id ) :
+CoDel::CoDel( std::queue<Packet>* flow_queue, uint32_t flow_id ) :
   _flow_queue( flow_queue ),
   _flow_id( flow_id ),
   first_above_time( 0 ),
@@ -12,9 +12,9 @@ CoDel::CoDel( std::queue<Packet> & flow_queue, uint32_t flow_id ) :
 
 DelayedPacket CoDel::_codel_deq()
 {
-  if (!_flow_queue.empty()) {
-    DelayedPacket p( _flow_queue.front()._tick, _flow_queue.front()._tick, _flow_queue.front() );
-    _flow_queue.pop();
+  if (!_flow_queue->empty()) {
+    DelayedPacket p( _flow_queue->front()._tick, _flow_queue->front()._tick, _flow_queue->front() );
+    _flow_queue->pop();
     return p;
   }
   else {
@@ -30,7 +30,7 @@ CoDel::dodeque_result CoDel::dodeque( uint64_t now )
     first_above_time = 0;
   } else {
     uint64_t sojourn_time = now - r.p.release_time;
-    if ( sojourn_time < target || _flow_queue.size() < maxpacket ) {
+    if ( sojourn_time < target || _flow_queue->size() < maxpacket ) {
       // went below so we'll stay below for at least interval
       first_above_time = 0;
     } else {
