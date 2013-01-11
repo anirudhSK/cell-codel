@@ -1,7 +1,7 @@
 #include "slotted-link.hh"
 #include "slotted-sender.hh"
 #include "scheduler.hh"
-#include "scheduling-algms/tail-scheduler.hh"
+#include "scheduling-algms/drr-scheduler.hh"
 #include <assert.h>
 
 int main( int argc, char* argv[] )
@@ -11,13 +11,13 @@ int main( int argc, char* argv[] )
 	int batch_size = atoi( argv[2] );
 	float ingress_rate = atof( argv[3] );
 	/* Pick a Scheduler */
-	Scheduler * scheduler = new TailScheduler();
+	Scheduler * scheduler = new DRRScheduler( true );
 	
 	/* Next sender */
 	std::vector<SlottedSender *> sender_list;
 
 	/* pick 500 senders */
-	int N = 500;
+	int N = 1;
 	uint32_t num_ticks = 100000;
 	int i = 0;
 	fprintf( stderr, "Using N = %d  senders, ingress rate = %f, batch size %d, running for %u ticks \n", N, ingress_rate, batch_size, num_ticks);
