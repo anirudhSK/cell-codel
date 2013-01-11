@@ -11,10 +11,7 @@
 #include "../packet.hh"
 using namespace std;
 
-class CoDel
-{
-private:
-  class DelayedPacket
+class DelayedPacket
   {
   public:
     uint64_t entry_time;
@@ -25,6 +22,9 @@ private:
       : entry_time( s_e ), release_time( s_r ), contents( s_c ) {}
   };
 
+class CoDel
+{
+private:
   typedef struct {
        DelayedPacket p; 
        bool ok_to_drop;

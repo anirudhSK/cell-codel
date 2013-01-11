@@ -10,7 +10,7 @@ CoDel::CoDel( std::queue<Packet> & flow_queue, uint32_t flow_id ) :
   drop_count( 0 )
 {}
 
-CoDel::DelayedPacket CoDel::_codel_deq()
+DelayedPacket CoDel::_codel_deq()
 {
   if (!_flow_queue.empty()) {
     DelayedPacket p( _flow_queue.front()._tick, _flow_queue.front()._tick, "legit" );
@@ -46,7 +46,7 @@ CoDel::dodeque_result CoDel::dodeque( uint64_t now )
   return r;
 }
 
-CoDel::DelayedPacket CoDel::deque( uint64_t now )
+DelayedPacket CoDel::deque( uint64_t now )
 {
   dodeque_result r = dodeque( now );
   if (r.p.contents.size() == 0 ) {
