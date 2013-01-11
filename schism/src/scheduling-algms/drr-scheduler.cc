@@ -1,7 +1,7 @@
 #include "drr-scheduler.hh"
 #include <algorithm>
 
-DRRScheduler::DRRScheduler() :
+DRRScheduler::DRRScheduler( bool t_codel_enabled ) :
 	Scheduler(),
 	_num_flows(0),
 	_flow_queues( std::vector<std::queue<Packet>>() ),
@@ -9,7 +9,9 @@ DRRScheduler::DRRScheduler() :
 	_flow_quantums( std::vector<double>() ),
 	_active_list( std::queue<uint32_t>() ),
 	_active_indicator( std::vector<bool>() ),
-	_current_flow( 0 )
+	_current_flow( 0 ),
+	_codel_servo_bank( std::vector<CoDel> () ),
+	_codel_enabled( t_codel_enabled )
 {}
 
 void DRRScheduler::add_sender( double weight )
@@ -20,6 +22,9 @@ void DRRScheduler::add_sender( double weight )
 	_flow_credits.push_back( 0 );
 	_flow_quantums.push_back( weight );
 	_active_indicator.push_back( false );
+	if ( _codel_enabled ) {
+		_codel_servo_bank.push_back( CoDel( _flow_queues.at( _num_flows ), _num_flows ) );
+	}
 	fprintf( stderr, "DRR: Adding flow %d with weight %f  \n", _num_flows, weight);
 	_num_flows++;
 }
@@ -44,6 +49,14 @@ void DRRScheduler::enqueue( Packet p )
 Packet DRRScheduler::dequeue( uint32_t flow_id )
 {
 	assert( !_flow_queues.at( flow_id ).empty() );
+	if ( _codel_enabled ) {
+		DelayedPacket packet = _codel_servo_bank.at( flow_id ).deque( _tick );
+		if(packet.contents.size() > 0) {
+			Packet to_send = packet.contents;
+			int64_t delay = _tick - to_send._tick;
+			fprintf( stderr, "seqnum %lu delay %ld flowid %u tick %lu queue %lu\n", to_send._seq_num, delay, flow_id, _tick, _flow_queues.at( flow_id ).size() );
+		}
+	}
 	Packet to_send = _flow_queues.at( flow_id ).front();
 	_flow_queues.at( flow_id ).pop();
 	int64_t delay = _tick - to_send._tick;

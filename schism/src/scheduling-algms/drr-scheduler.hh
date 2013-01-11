@@ -4,6 +4,7 @@
 #include "../slotted-sender.hh"
 #include "../packet.hh"
 #include "../scheduler.hh"
+#include "codel.hh"
 
 /* Deficit Round Robin Scheduler (Shrredhar and Varghese 1995) */
 class DRRScheduler : public Scheduler
@@ -18,8 +19,12 @@ private :
 	std::vector<bool> _active_indicator;
 	uint32_t _current_flow;
 
+	/* Optional CoDel servo bank for all flows */
+	std::vector<CoDel> _codel_servo_bank;
+	bool _codel_enabled;
+
 public :
-	DRRScheduler();
+	DRRScheduler( bool t_codel_enabled );
 	
 	void add_sender( double weight );
 	

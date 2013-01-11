@@ -92,5 +92,5 @@ DelayedPacket CoDel::deque( uint64_t now )
 void CoDel::drop (DelayedPacket p)
 {
   drop_count++;
-  fprintf( stderr,"Flow %d :Codel dropped a packet with size %u, count now at %d \n", _flow_id, p.contents.size(), drop_count );
+  fprintf( stderr,"Flow %d :Codel dropped a packet with size %u, seqnum %lu drop_count now at %d \n", _flow_id, p.contents.size(), p.contents._seq_num, drop_count );
 }
