@@ -13,12 +13,12 @@ CoDel::CoDel( std::queue<Packet> & flow_queue, uint32_t flow_id ) :
 DelayedPacket CoDel::_codel_deq()
 {
   if (!_flow_queue.empty()) {
-    DelayedPacket p( _flow_queue.front()._tick, _flow_queue.front()._tick, "legit" );
+    DelayedPacket p( _flow_queue.front()._tick, _flow_queue.front()._tick, _flow_queue.front() );
     _flow_queue.pop();
     return p;
   }
   else {
-    DelayedPacket p ( 0,0,"");
+    DelayedPacket p ( 0,0, Packet(-1,-1) );
     return p;
   }
 }
@@ -92,5 +92,5 @@ DelayedPacket CoDel::deque( uint64_t now )
 void CoDel::drop (DelayedPacket p)
 {
   drop_count++;
-  fprintf( stderr,"Flow %d :Codel dropped a packet with size %ld, count now at %d \n", _flow_id, p.contents.size(), drop_count );
+  fprintf( stderr,"Flow %d :Codel dropped a packet with size %u, count now at %d \n", _flow_id, p.contents.size(), drop_count );
 }

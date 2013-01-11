@@ -16,9 +16,9 @@ class DelayedPacket
   public:
     uint64_t entry_time;
     uint64_t release_time;
-    string contents;
+    Packet contents;
 
-    DelayedPacket( uint64_t s_e, uint64_t s_r, const string & s_c )
+    DelayedPacket( uint64_t s_e, uint64_t s_r, const Packet & s_c )
       : entry_time( s_e ), release_time( s_r ), contents( s_c ) {}
   };
 
