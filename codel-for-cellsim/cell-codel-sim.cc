@@ -7,6 +7,7 @@
 #include "packetsocket.hh"
 #include "delay-queue.hh"
 #include "timestamp.h"
+#include "skype-delays.h"
 
 int main( int argc, char *argv[] )
 {
@@ -42,6 +43,7 @@ int main( int argc, char *argv[] )
     if ( sel.read( client_side.fd() ) ) {
       std::vector< string > filtered_packets( client_side.recv_raw() );
       for ( auto it = filtered_packets.begin(); it != filtered_packets.end(); it++ ) {
+        skype_delays( *it, get_absolute_us(), "RECEIVED UPLINKIN ");
 	uplink.write( *it );
       }
     }
@@ -49,17 +51,20 @@ int main( int argc, char *argv[] )
     if ( sel.read( internet_side.fd() ) ) {
       std::vector< string > filtered_packets( internet_side.recv_raw() );
       for ( auto it = filtered_packets.begin(); it != filtered_packets.end(); it++ ) {
+        skype_delays( *it, get_absolute_us(), "RECEIVED DOWNLINKIN ");
 	downlink.write( *it );
       }
     }
 
     std::vector< string > uplink_packets( uplink.read() );
     for ( auto it = uplink_packets.begin(); it != uplink_packets.end(); it++ ) {
+      skype_delays( *it, get_absolute_us(), "SENT UPLINKOUT ");
       internet_side.send_raw( *it );
     }
 
     std::vector< string > downlink_packets( downlink.read() );
     for ( auto it = downlink_packets.begin(); it != downlink_packets.end(); it++ ) {
+      skype_delays( *it, get_absolute_us(), "SENT DOWNLINKOUT ");
       client_side.send_raw( *it );
     }
   }
