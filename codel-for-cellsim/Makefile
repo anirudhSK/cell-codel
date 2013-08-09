@@ -3,7 +3,7 @@ objects = payload.o select.o packetsocket.o   timestamp.o delay-queue.o pkt-clas
 executables = cell-codel-sim
 
 CXX = g++
-CXXFLAGS = -g -O3 -std=c++0x -ffast-math -pedantic -Wall -Wextra -Weffc++ -fno-default-inline -pipe -D_FILE_OFFSET_BITS=64 -D_XOPEN_SOURCE=500 -D_GNU_SOURCE
+CXXFLAGS = -g -O3 -std=c++0x -ffast-math -pedantic -Wall -Wextra -Werror -Weffc++ -fno-default-inline -pipe -D_FILE_OFFSET_BITS=64 -D_XOPEN_SOURCE=500 -D_GNU_SOURCE
 LIBS = -lm -lrt
 
 all: $(executables)
