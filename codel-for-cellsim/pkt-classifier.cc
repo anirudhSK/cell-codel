@@ -25,12 +25,11 @@ flowid_t PktClassifier::get_flow_id( std::string packet_str ) const
     const char* packet = packet_str.c_str();
     const struct ip* ip_hdr;
     ip_hdr = ( struct ip*) ( packet + sizeof( struct ether_header ) );
-    auto hdr_len  = ip_hdr->ip_hl;
     auto protocol = ip_hdr->ip_p;
   
     return protocol;
   } else {
-    printf( " Some other protocol type, packet is %x \n", packet_str.c_str() );
+    printf( " Some other protocol type, packet is %s \n", packet_str.c_str() );
     return (uint8_t)-1;
   }
 }
@@ -41,7 +40,7 @@ std::string PktClassifier::get_udp_header( std::string udp_packet ) const
   const struct udphdr* udp_hdr = (struct udphdr*) ( udp_hdr_with_data );
   auto sport = ntohs( udp_hdr -> source );
   auto dport = ntohs( udp_hdr -> dest );
-  return "";
+  return std::to_string(sport) + std::to_string(dport);
 }
 
 std::string PktClassifier::get_tcp_header( std::string tcp_packet ) const
@@ -50,7 +49,7 @@ std::string PktClassifier::get_tcp_header( std::string tcp_packet ) const
   const struct tcphdr* tcp_hdr = (struct tcphdr*) ( tcp_hdr_with_data );
   auto sport = ntohs( tcp_hdr -> source );
   auto dport = ntohs( tcp_hdr -> dest );
-  return "";
+  return std::to_string(sport) + std::to_string(dport);
 }
 
 std::string PktClassifier::pkt_hash( std::string packet ) const
