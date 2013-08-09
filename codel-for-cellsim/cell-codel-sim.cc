@@ -11,7 +11,7 @@
 
 int main( int argc, char *argv[] )
 {
-  const char *up_filename, *down_filename, *client_mac;
+  const char *up_filename, *down_filename, *client_mac, *internet_iface, *client_iface;
 
   assert(argc == 6);
 
