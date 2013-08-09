@@ -1,4 +1,4 @@
-#! /bin/bash
+#! /usr/bin/python
 import sys
 import httplib
 from time import time
