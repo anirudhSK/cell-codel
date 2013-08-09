@@ -13,8 +13,6 @@ int main( int argc, char *argv[] )
 {
   const char *up_filename, *down_filename, *client_mac;
 
-  assert( argc == 5 );
-
   up_filename = argv[ 1 ];
   down_filename = argv[ 2 ];
   client_mac = argv[ 3 ];
