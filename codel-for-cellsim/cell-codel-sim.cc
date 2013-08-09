@@ -12,14 +12,18 @@
 int main( int argc, char *argv[] )
 {
   const char *up_filename, *down_filename, *client_mac, *internet_iface, *client_iface;
+  float loss_rate;
 
-  assert(argc == 6);
+  assert(argc == 7);
 
   up_filename = argv[ 1 ];
   down_filename = argv[ 2 ];
   client_mac = argv[ 3 ];
-  internet_iface = argv[4];
-  client_iface = argv[5];
+  loss_rate = atof(argv[4]);
+  loss_rate += 1; /* TODO: Actually use this */
+
+  internet_iface = argv[5];
+  client_iface = argv[6];
   
   PacketSocket internet_side( internet_iface, string(), string( client_mac ) );
   PacketSocket client_side( client_iface, string( client_mac ), string() );
