@@ -82,6 +82,11 @@ void DelayQueue::tick( void )
 {
   uint64_t now = timestamp();
 
+  /* If the schedule is empty, end playback */
+  if ( _schedule.empty() ) {
+    exit( 0 );
+  }
+
   /* move packets from end of delay to PDP */
   while ( (!_delay.empty())
 	  && (_delay.front().release_time <= now) ) {
