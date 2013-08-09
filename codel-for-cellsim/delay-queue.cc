@@ -1,5 +1,5 @@
 #include "delay-queue.hh"
-DelayQueue::DelayQueue( const string & s_name, const uint64_t s_ms_delay, const char *filename, const uint64_t base_timestamp , bool codel_enable )
+DelayQueue::DelayQueue( const string & s_name, const uint64_t s_ms_delay, const char *filename, const uint64_t base_timestamp)
   : _name( s_name ),
     _delay(),
     _pdp(),
@@ -10,14 +10,7 @@ DelayQueue::DelayQueue( const string & s_name, const uint64_t s_ms_delay, const 
     _used_bytes( 0 ),
     _queued_bytes( 0 ),
     _bin_sec( base_timestamp / 1000 ),
-    _base_timestamp( base_timestamp ),
-    first_above_time( 0),
-    drop_next(0),
-    count(0),
-    dropping(false),
-    _bytes_in_queue(0) ,
-    drop_count(0) ,
-    _codel_enabled(codel_enable)
+    _base_timestamp( base_timestamp )
 {
   FILE *f = fopen( filename, "r" );
   if ( f == NULL ) {
@@ -92,8 +85,7 @@ void DelayQueue::tick( void )
   /* move packets from end of delay to PDP */
   while ( (!_delay.empty())
 	  && (_delay.front().release_time <= now) ) {
-    _pdp.push( _delay.front() );
-    _bytes_in_queue+=_delay.front().contents.size(); 
+    enque(_delay.front());
    /* track bytes */
     _delay.pop();
   }
@@ -107,41 +99,32 @@ void DelayQueue::tick( void )
     /* execute regular queue */
     while ( bytes_to_play_with > 0 ) {
       /* will this be an underflow? */
-      if ( _pdp.empty() ) {
+      if (empty()) {
 	_total_bytes += bytes_to_play_with;
 	bytes_to_play_with = 0;
 	/* underflow */
 //	fprintf( stderr, "%s %f underflow!\n", _name.c_str(), now / 1000.0 );
       } else {
-	DelayedPacket packet = _pdp.front();
+	DelayedPacket packet = head();
 	if ( bytes_to_play_with + packet.bytes_earned >= (int)packet.contents.size() ) {
 	  /* deliver whole packet */
 	  _total_bytes += packet.contents.size();
 	  _used_bytes += packet.contents.size();
 
+          packet=deque();
+          if(packet.contents.size() > 0) {
+            _delivered.push_back( packet.contents );
+            fprintf( stderr, "%s %f delivery %d\n", _name.c_str(), convert_timestamp( now ) / 1000.0, int(now - packet.entry_time) );
+          }
 
-          /* TODO : Implement codel here */
-          if (_codel_enabled) {
-            packet=deque();
-            if(packet.contents.size() > 0) {
-              _delivered.push_back( packet.contents );
-              fprintf( stderr, "%s %f delivery %d\n", _name.c_str(), convert_timestamp( now ) / 1000.0, int(now - packet.entry_time) );
-            }
-          }
-          else {
-            packet=_pdp.front();
-	    _delivered.push_back( packet.contents );
-	    fprintf( stderr, "%s %f delivery %d\n", _name.c_str(), convert_timestamp( now ) / 1000.0, int(now - packet.entry_time) );
-	    _pdp.pop();
-          }
 	  bytes_to_play_with -= (packet.contents.size()-packet.bytes_earned);
 	} else {
 	  /* continue to accumulate credit */
 	  assert( bytes_to_play_with + packet.bytes_earned < (int)packet.contents.size() );
-          _pdp.front().bytes_earned += bytes_to_play_with;
+          head().bytes_earned += bytes_to_play_with;
   //        fprintf( stderr , "%s %f Accumulating credit, current earned credit is %d and pkt size is %ld \n",
   //                        _name.c_str(), convert_timestamp(now)/1000.0,_pdp.front().bytes_earned,_pdp.front().contents.size());
-          assert( _pdp.front().bytes_earned < (int)_pdp.front().contents.size() );
+          assert( head().bytes_earned < (int)_pdp.front().contents.size() );
 	  bytes_to_play_with = 0;
 	}
       }
@@ -157,93 +140,20 @@ void DelayQueue::tick( void )
   }
 }
 
-DelayQueue::DelayedPacket DelayQueue::_pdp_deq()
-{
-   if (!_pdp.empty()) {
-     _bytes_in_queue-=_pdp.front().contents.size();
-     DelayedPacket p(_pdp.front());
-     _pdp.pop();
-     return p;
-   }
-   else {
-    DelayedPacket p ( 0,0,"");
-    return p;
-   }
+void DelayQueue::enque(DelayedPacket p) {
+  _pdp.push(p);
 }
 
-
-DelayQueue::dodeque_result DelayQueue::dodeque ( ) 
-  {
-      uint64_t now=timestamp();
-      dodeque_result r = { _pdp_deq(), false };
-      if (r.p.contents.size() == 0 ) {
-            first_above_time = 0;
-      } else {
-            uint64_t sojourn_time = now - r.p.release_time;
-            if (sojourn_time < target || _bytes_in_queue < maxpacket) {
-                  // went below so we'll stay below for at least interval
-                  first_above_time = 0;
-            } else {
-                  if (first_above_time == 0) {
-                        // just went above from below. if we stay above
-                        // for at least interval we'll say it's ok to drop
-                        first_above_time = now + interval;
-                  } else if (now >= first_above_time) {
-                        r.ok_to_drop = true;
-                  }
-            }
-      }
-      return r; 
-  }
-
-
-DelayQueue::DelayedPacket DelayQueue::deque( )
-{
-      uint64_t now = timestamp();
-      dodeque_result r = dodeque();
-      if (r.p.contents.size() == 0 ) {
-            // an empty queue takes us out of dropping state
-            dropping = 0;
-            return r.p;
-      }
-      if (dropping) {
-            if (! r.ok_to_drop) {
-                  // sojourn time below target - leave dropping state
-                  dropping = 0;
-            } else if (now >= drop_next) {
-                  while (now >= drop_next && dropping) {
-                        drop(r.p);
-                        ++count;
-                        r = dodeque();
-                        if (! r.ok_to_drop)
-                              // leave dropping state
-                              dropping = 0;
-                        else
-                              // schedule the next drop.
-                              drop_next = control_law(drop_next);
-                        /* execute exactly once on limbo queue */
-                  }
-            }
-      } else if (r.ok_to_drop &&
-                         ((now - drop_next < interval) ||
-                          (now - first_above_time >= interval))) {
-                   drop(r.p);
-                   r = dodeque();
-                   dropping = 1;
-                   // If we're in a drop cycle, the drop rate that controlled the queue
-                   // on the last cycle is a good starting point to control it now.
-                   if (now - drop_next < interval)
-                           count = count>2? count-2 : 1;
-                   else
-                           count = 1;
-                   drop_next = control_law(now);
-             }
-             return (r.p);
+bool DelayQueue::empty() {
+  return  _pdp.empty();
 }
 
-void DelayQueue::drop (DelayedPacket p) 
-  { 
-   drop_count++;
-   fprintf(stderr,"%s :Codel dropped a packet with size %ld, count now at %d \n",_name.c_str(),p.contents.size(),drop_count);
-  }
+DelayedPacket & DelayQueue::head() {
+  return _pdp.front();
+}
 
+DelayedPacket DelayQueue::deque() {
+  DelayedPacket packet=_pdp.front();
+  _pdp.pop();
+  return packet;
+}
