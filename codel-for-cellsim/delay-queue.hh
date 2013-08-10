@@ -14,14 +14,26 @@
 using namespace std;
 /* Codel parameter */
 
-class DelayQueue
-{
-private:
-  typedef struct {
-       DelayedPacket p; 
-       bool ok_to_drop;
-  } dodeque_result; 
+class DelayQueue {
+ public:
+  DelayQueue( const string & s_name, const uint64_t s_ms_delay, const char *filename, const uint64_t base_timestamp);
+  virtual ~DelayQueue() {}
 
+  int wait_time( void );
+  std::vector< string > read( void );
+  void write( const string & packet );
+
+ protected:
+  /* virtual functions that can be overridden in the derived class */
+  virtual void enque(DelayedPacket p);
+
+  virtual DelayedPacket & head(void);
+
+  virtual DelayedPacket deque(void);
+
+  virtual bool empty(void);
+
+ private:
   static const int SERVICE_PACKET_SIZE = 1500;
 
   uint64_t convert_timestamp( const uint64_t absolute_timestamp ) const { return absolute_timestamp - _base_timestamp; }
@@ -46,22 +58,5 @@ private:
   uint64_t _base_timestamp;
 
   void tick( void );
-
-  /* virtual functions that can be overridden in the derived class */
-  virtual void enque(DelayedPacket p);
-
-  virtual DelayedPacket & head(void);
-
-  virtual DelayedPacket deque(void);
-
-  virtual bool empty(void);
-
-public:
-  DelayQueue( const string & s_name, const uint64_t s_ms_delay, const char *filename, const uint64_t base_timestamp);
-  virtual ~DelayQueue() {}
-
-  int wait_time( void );
-  std::vector< string > read( void );
-  void write( const string & packet );
 };
 #endif
