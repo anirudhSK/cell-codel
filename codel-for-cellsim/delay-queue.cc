@@ -1,8 +1,8 @@
 #include "delay-queue.hh"
 DelayQueue::DelayQueue( const string & s_name, const uint64_t s_ms_delay, const char *filename, const uint64_t base_timestamp)
   : _name( s_name ),
-    _delay(),
     _pdp(),
+    _delay(),
     _schedule(),
     _delivered(),
     _ms_delay( s_ms_delay ),
@@ -154,6 +154,7 @@ bool DelayQueue::empty() {
 }
 
 DelayedPacket & DelayQueue::head() {
+  assert (!_pdp.empty());
   return _pdp.front();
 }
 

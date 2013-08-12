@@ -33,15 +33,17 @@ class DelayQueue {
 
   virtual bool empty(void);
 
+  const string _name;
+ 
+  std::queue< DelayedPacket > _pdp;
+
  private:
   static const int SERVICE_PACKET_SIZE = 1500;
 
   uint64_t convert_timestamp( const uint64_t absolute_timestamp ) const { return absolute_timestamp - _base_timestamp; }
 
-  const string _name;
 
   std::queue< DelayedPacket > _delay;
-  std::queue< DelayedPacket > _pdp;
 
   std::queue< uint64_t > _schedule;
 
