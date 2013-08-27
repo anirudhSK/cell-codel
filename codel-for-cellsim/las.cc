@@ -36,17 +36,15 @@ bool Las::empty(void) const {
 DelayedPacket Las::deque() {
   /* Implements pure virtual function Queue::deque() */
   uint64_t chosen_flow = las();
-  /* TODO: Is this empty-and-reset check correct here? */
   if ( pkt_queues_.find(chosen_flow) != pkt_queues_.end() ) {
+    assert(!pkt_queues_.at(chosen_flow).empty());
+    DelayedPacket p = pkt_queues_.at(chosen_flow).front();
+    pkt_queues_.at(chosen_flow).pop();
+    attained_service_.at(chosen_flow) += p.contents.size();
     if (pkt_queues_.at(chosen_flow).empty()) { /* Queue is empty now */
       attained_service_.at(chosen_flow) = 0; /* reset flow counter */
-      return DelayedPacket::nullpkt();
-    } else {
-      DelayedPacket p = pkt_queues_.at(chosen_flow).front();
-      pkt_queues_.at(chosen_flow).pop();
-      attained_service_.at(chosen_flow) += p.contents.size();
-      return p;
     }
+    return p;
   } else {
     return DelayedPacket::nullpkt();
   }
@@ -68,10 +66,25 @@ uint64_t Las::hash(DelayedPacket pkt) const {
 }
 
 uint64_t Las::las() const {
+  /* Clone attained_service_ map */
   typedef std::pair<uint64_t, uint32_t> FlowServices;
+  std::map<uint64_t,uint32_t> service_clone;
+
+  /* Purge all empty queues from consideration */
+  for (auto it = attained_service_.begin(); it != attained_service_.end(); it++) {
+    if (!pkt_queues_.at(it->first).empty()) {
+      service_clone[it->first] = attained_service_.at(it->first);
+    }
+  }
+
+  /* Among the non-empty queues, find the one with least sttained service */
   auto flow_compare = [&] (const FlowServices & q1, const FlowServices &q2 )
-                      { if (pkt_queues_.at(q1.first).empty()) return false;
-                        else if (pkt_queues_.at(q2.first).empty()) return true;
-                        else return q1.second < q2.second ; };
-  return std::min_element(attained_service_.begin(), attained_service_.end(), flow_compare) -> first;
+                      { assert (!pkt_queues_.at(q1.first).empty());
+                        assert (!pkt_queues_.at(q2.first).empty());
+                        return q1.second < q2.second ; };
+  if (service_clone.empty()) {
+    return -1;
+  } else {
+    return std::min_element(service_clone.begin(), service_clone.end(), flow_compare) -> first;
+  }
 }
