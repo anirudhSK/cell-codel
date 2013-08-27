@@ -1,5 +1,5 @@
-source = payload.cc select.cc packetsocket.cc cell-sched.cc delay-queue.cc timestamp.cc pkt-classifier.cc
-objects = payload.o select.o packetsocket.o   timestamp.o delay-queue.o pkt-classifier.o
+source = payload.cc select.cc packetsocket.cc cell-sched.cc delay-queue.cc timestamp.cc pkt-classifier.cc las.cc codel.cc
+objects = payload.o select.o packetsocket.o   timestamp.o delay-queue.o pkt-classifier.o las.o codel.o
 executables = cell-sched
 
 CXX = g++

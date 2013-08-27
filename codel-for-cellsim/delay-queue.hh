@@ -12,7 +12,6 @@
 #include "delayed-packet.hh"
 
 using namespace std;
-/* Codel parameter */
 
 class DelayQueue {
  public:
