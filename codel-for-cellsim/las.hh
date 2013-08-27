@@ -24,14 +24,14 @@ class Las : public DelayQueue {
 
   virtual DelayedPacket deque(void) override;
 
-  virtual bool empty(void) override;
+  virtual bool empty(void) const override;
 
  private :
   /* Hash from packet to flow */
-  uint64_t hash(DelayedPacket p);
+  uint64_t hash(DelayedPacket p) const;
 
   /* Pick the flow with the LAS */
-  uint64_t las(void);
+  uint64_t las(void) const;
 
   /* Underlying per flow FIFOs and enque wrapper */
   std::map<uint64_t, std::queue<DelayedPacket>> pkt_queues_;

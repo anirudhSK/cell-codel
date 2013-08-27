@@ -30,7 +30,7 @@ class DelayQueue {
 
   virtual DelayedPacket deque(void);
 
-  virtual bool empty(void);
+  virtual bool empty(void) const;
 
   const string _name;
  

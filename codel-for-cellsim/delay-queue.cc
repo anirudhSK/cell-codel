@@ -149,7 +149,7 @@ void DelayQueue::enque(DelayedPacket p) {
   _pdp.push(p);
 }
 
-bool DelayQueue::empty() {
+bool DelayQueue::empty() const {
   return  _pdp.empty();
 }
 

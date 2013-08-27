@@ -24,7 +24,7 @@ DelayedPacket & Las::head(void) {
   return pkt_queues_.at(las()).front();
 }
 
-bool Las::empty(void) {
+bool Las::empty(void) const {
   for (auto it = pkt_queues_.begin(); it != pkt_queues_.end(); it++) {
     if (!it->second.empty()) {
       return false;
@@ -36,6 +36,7 @@ bool Las::empty(void) {
 DelayedPacket Las::deque() {
   /* Implements pure virtual function Queue::deque() */
   uint64_t chosen_flow = las();
+  /* TODO: Is this empty-and-reset check correct here? */
   if ( pkt_queues_.find(chosen_flow) != pkt_queues_.end() ) {
     if (pkt_queues_.at(chosen_flow).empty()) { /* Queue is empty now */
       attained_service_.at(chosen_flow) = 0; /* reset flow counter */
@@ -61,12 +62,12 @@ void Las::enque_packet(DelayedPacket p, uint64_t flow_id) {
   }
 }
 
-uint64_t Las::hash(DelayedPacket pkt) {
+uint64_t Las::hash(DelayedPacket pkt) const {
   /* TODO: Improve implementation, dumb hash for now. */
   return PktClassifier().get_flow_id(pkt.contents);
 }
 
-uint64_t Las::las() {
+uint64_t Las::las() const {
   typedef std::pair<uint64_t, uint32_t> FlowServices;
   auto flow_compare = [&] (const FlowServices & q1, const FlowServices &q2 )
                       { if (pkt_queues_.at(q1.first).empty()) return false;
