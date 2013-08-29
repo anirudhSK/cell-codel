@@ -27,17 +27,17 @@ class Las : public DelayQueue {
   virtual bool empty(void) const override;
 
  private :
-  /* Hash from packet to flow */
+  /* Hash from packet to bin */
   uint64_t hash(DelayedPacket p) const;
 
-  /* Pick the flow with the LAS */
+  /* Pick the bin with the LAS */
   uint64_t las(void) const;
 
-  /* Underlying per flow FIFOs and enque wrapper */
+  /* Underlying per bin FIFOs and enque wrapper */
   std::map<uint64_t, std::queue<DelayedPacket>> pkt_queues_;
-  void enque_packet(DelayedPacket p, uint64_t flow_id);
+  void enque_packet(DelayedPacket p, uint64_t bin_id);
 
-  /* Maintain attained service for each flow */
+  /* Maintain attained service for each bin */
   std::map<uint64_t, uint32_t> attained_service_;
 };
 
