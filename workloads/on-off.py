@@ -20,30 +20,32 @@ url      = sys.argv[1]
 duration = int(sys.argv[2])
 persistent_str = sys.argv[3]
 nsrc = int(sys.argv[4])
+conns = dict()
 
 # Fetch one flow's worth of bytes
-def issue_next_get(start, flow_size, conn, is_persistent):
+def issue_next_get(flow_size, conn, is_persistent):
   time_before_get = time()
   if (is_persistent):
-    conn.request("GET", "/randomhuge", '', {'Range' : 'bytes='+str(start)+'-'+str(start + flow_size - 1)})
+    conn.request("GET", "/randomhuge", '', {'Range' : 'bytes=0'+'-'+str(flow_size - 1)})
   else :
-    conn.request("GET", "/randomhuge", '', {'Range' : 'bytes='+str(start)+'-'+str(start + flow_size - 1), 'Connection' : 'Close'})
+    conn.request("GET", "/randomhuge", '', {'Range' : 'bytes=0'+'-'+str(flow_size - 1), 'Connection' : 'Close'})
 
   time_after_get  = time()
+  print >> sys.stderr, "request string\nGET /randomhuge\nRange : bytes=0"+"-"+str(flow_size - 1);
   resp = conn.getresponse()
   resp.read()
   time_to_response = time()
   syn_fct = int(1000*(time_to_response-time_before_get))
   get_fct = int(1000*(time_to_response-time_after_get))
-  return (start+flow_size, syn_fct, get_fct)
+  return (syn_fct, get_fct)
 
 # Simulate an ON/OFF source
 def on_off_source(thread_name):
   print thread_name
   # Initialization
-  global time_start
+  global time_start, conns
   current_time = time() - time_start;
-  conn = httplib.HTTPConnection(url);
+  conns[thread_name] = httplib.HTTPConnection(url);
   byte_marker = 0
   is_persistent = (persistent_str == "persistent")
   counter = 1
@@ -58,9 +60,13 @@ def on_off_source(thread_name):
   
     # Sample flow size
     flow_size = int(random.expovariate(1.0/flow_mean))
-  
+
+    # Clamp flow_size
+    if (flow_size > int(1e9)) :
+      flow_size = int(1e9);
+
     # Retrieve flow
-    (byte_marker, syn_fct, get_fct) = issue_next_get(byte_marker, flow_size, conn, is_persistent)
+    (syn_fct, get_fct) = issue_next_get(flow_size, conns[thread_name], is_persistent)
  
     # print stats
     print thread_name," Flow #", counter," size: ", flow_size," bytes syn_fct: ", syn_fct," get_fct: ", get_fct 
@@ -70,6 +76,8 @@ def on_off_source(thread_name):
     
     # Increment counter
     counter += 1
+
+  conns[thread_name].close()
 
 if __name__ == "__main__" :
   for i in range(0, nsrc):    
