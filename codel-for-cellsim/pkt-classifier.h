@@ -3,7 +3,7 @@
 
 #include<string>
 
-typedef u_int8_t  flowid_t;
+typedef u_int64_t  flowid_t;
 typedef u_int16_t source_t;
 typedef u_int16_t dest_t;
 

@@ -26,8 +26,14 @@ flowid_t PktClassifier::get_flow_id( std::string packet_str ) const
     const struct ip* ip_hdr;
     ip_hdr = ( struct ip*) ( packet + sizeof( struct ether_header ) );
     auto protocol = ip_hdr->ip_p;
-  
-    return protocol;
+
+    const struct tcphdr* tcp_hdr = (struct tcphdr*) (packet + sizeof(struct ether_header) + sizeof(struct ip));
+    uint16_t sport = ntohs( tcp_hdr -> source );
+    uint16_t dport = ntohs( tcp_hdr -> dest );
+
+    printf("protocol type is %d, sport is %d, dport is %d\n", protocol, sport, dport);
+
+    return dport*sport;
   } else {
     printf( " Some other protocol type, packet is %s \n", packet_str.c_str() );
     return (uint8_t)-1;
