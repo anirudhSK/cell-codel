@@ -129,7 +129,7 @@ void DelayQueue::tick( void )
           head().bytes_earned += bytes_to_play_with;
   //        fprintf( stderr , "%s %f Accumulating credit, current earned credit is %d and pkt size is %ld \n",
   //                        _name.c_str(), convert_timestamp(now)/1000.0,_pdp.front().bytes_earned,_pdp.front().contents.size());
-          assert( head().bytes_earned < (int)_pdp.front().contents.size() );
+          assert( head().bytes_earned < (int)head().contents.size() );
 	  bytes_to_play_with = 0;
 	}
       }
