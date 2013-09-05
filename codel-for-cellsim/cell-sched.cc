@@ -14,15 +14,13 @@
 int main( int argc, char *argv[] )
 {
   const char *up_filename, *down_filename, *client_mac, *internet_iface, *client_iface;
-  float loss_rate;
 
   assert(argc == 7);
 
   up_filename = argv[ 1 ];
   down_filename = argv[ 2 ];
   client_mac = argv[ 3 ];
-  loss_rate = atof(argv[4]);
-  loss_rate += 1; /* TODO: Actually use this */
+  std::string qdisc(argv[4]);
 
   internet_iface = argv[5];
   client_iface = argv[6];
@@ -32,9 +30,19 @@ int main( int argc, char *argv[] )
 
   /* Read in schedule */
   uint64_t now = timestamp();
-  DelayQueue* uplink = new sfqCoDel( "uplink", 20, up_filename, now );
-  DelayQueue* downlink = new sfqCoDel( "downlink", 20, down_filename, now );
-  printf("Using Las as the scheduling discipline\n");
+  DelayQueue *uplink, *downlink;
+  if (qdisc == "las") {
+    uplink = new Las( "uplink", 20, up_filename, now );
+    downlink = new Las( "downlink", 20, down_filename, now );
+    printf("Using Las as the scheduling discipline\n");
+  } else if (qdisc == "sfqCoDel") {
+    uplink = new sfqCoDel( "uplink", 20, up_filename, now );
+    downlink = new sfqCoDel( "downlink", 20, down_filename, now );
+    printf("Using sfqCoDel\n");
+  } else {
+    printf("Invalid qdisc\n");
+    exit(EXIT_FAILURE);
+  }
 
   Select &sel = Select::get_instance();
   sel.add_fd( internet_side.fd() );
