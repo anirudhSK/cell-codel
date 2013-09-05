@@ -29,8 +29,10 @@ void sfqCoDel::enque(DelayedPacket p) {
 }
 
 DelayedPacket & sfqCoDel::head(void) {
-  assert (!pkt_queues_.at(active_list_.front()).empty());
-  return pkt_queues_.at(active_list_.front()).front();
+  uint64_t to_sched = next_bin();
+  assert (to_sched != (uint64_t) -1);
+  assert (!pkt_queues_.at(to_sched).empty());
+  return pkt_queues_.at(to_sched).front();
 }
 
 DelayedPacket sfqCoDel::deque() {
@@ -124,10 +126,9 @@ void sfqCoDel::enque_packet(DelayedPacket p, uint64_t bin_id) {
 }
 
 DelayedPacket sfqCoDel::codel_deq_helper(uint64_t bin_id) {
-  std::queue<DelayedPacket> bin_queue = pkt_queues_.at(bin_id);
-  if (!bin_queue.empty()) {
-    DelayedPacket p(bin_queue.front());
-    bin_queue.pop();
+  if (!pkt_queues_.at(bin_id).empty()) {
+    DelayedPacket p(pkt_queues_.at(bin_id).front());
+    pkt_queues_.at(bin_id).pop();
     bytes_in_queue_ -= p.contents.size();
     return p;
   } else {

@@ -7,6 +7,7 @@
 #include "packetsocket.hh"
 #include "delay-queue.hh"
 #include "las.hh"
+#include "sfqCoDel.hh"
 #include "timestamp.h"
 #include "skype-delays.h"
 
@@ -31,8 +32,8 @@ int main( int argc, char *argv[] )
 
   /* Read in schedule */
   uint64_t now = timestamp();
-  DelayQueue* uplink = new Las( "uplink", 20, up_filename, now );
-  DelayQueue* downlink = new Las( "downlink", 20, down_filename, now );
+  DelayQueue* uplink = new sfqCoDel( "uplink", 20, up_filename, now );
+  DelayQueue* downlink = new sfqCoDel( "downlink", 20, down_filename, now );
   printf("Using Las as the scheduling discipline\n");
 
   Select &sel = Select::get_instance();
