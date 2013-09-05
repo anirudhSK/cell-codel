@@ -6,23 +6,6 @@ from time import sleep
 import random
 import thread
 
-# Constants
-off_mean=300 # 300 ms off time
-flow_mean=100000 # 100 KB
-time_start = time();
-
-# Command line arguments
-if (len(sys.argv) < 6) :
-  print "Usage: enter url, duration in secs, persistence, nsrc, random_seed"
-  exit(5)
-
-url      = sys.argv[1]
-duration = int(sys.argv[2])
-persistent_str = sys.argv[3]
-nsrc = int(sys.argv[4])
-random_seed = int(sys.argv[5])
-conns = dict()
-
 # Fetch one flow's worth of bytes
 def issue_next_get(flow_size, conn, is_persistent):
   time_before_get = time()
@@ -41,10 +24,9 @@ def issue_next_get(flow_size, conn, is_persistent):
   return (syn_fct, get_fct)
 
 # Simulate an ON/OFF source
-def on_off_source(thread_name):
+def on_off_source(thread_name, url, duration, persistent_str, conns, time_start):
   print thread_name
   # Initialization
-  global time_start, conns
   current_time = time() - time_start;
   conns[thread_name] = httplib.HTTPConnection(url);
   byte_marker = 0
@@ -81,8 +63,25 @@ def on_off_source(thread_name):
   conns[thread_name].close()
 
 if __name__ == "__main__" :
+  # Constants
+  off_mean = 300 # 300 ms off time
+  flow_mean = 100000 # 100 KB
+  time_start = time();
+
+  # Command line arguments
+  if (len(sys.argv) < 6) :
+    print "Usage: enter url, duration in secs, persistence, nsrc, random_seed"
+    exit(5)
+
+  url      = sys.argv[1]
+  duration = int(sys.argv[2])
+  persistent_str = sys.argv[3]
+  nsrc = int(sys.argv[4])
+  random_seed = int(sys.argv[5])
+
+  conns = dict()
   print "Initializing random seed", random_seed
   random.seed(random_seed)
   for i in range(0, nsrc):    
-    thread.start_new_thread(on_off_source, ("Thread-"+str(i),))
-  sleep(duration+1)
+    thread.start_new_thread(on_off_source, ("Thread-"+str(i), url, duration, persistent_str, conns, time_start))
+  sleep(duration + 1)
