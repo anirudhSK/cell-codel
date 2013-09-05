@@ -12,14 +12,15 @@ flow_mean=100000 # 100 KB
 time_start = time();
 
 # Command line arguments
-if (len(sys.argv) < 5) :
-  print "Usage: enter url, duration in secs, persistence, nsrc"
+if (len(sys.argv) < 6) :
+  print "Usage: enter url, duration in secs, persistence, nsrc, random_seed"
   exit(5)
 
 url      = sys.argv[1]
 duration = int(sys.argv[2])
 persistent_str = sys.argv[3]
 nsrc = int(sys.argv[4])
+random_seed = int(sys.argv[5])
 conns = dict()
 
 # Fetch one flow's worth of bytes
@@ -80,6 +81,8 @@ def on_off_source(thread_name):
   conns[thread_name].close()
 
 if __name__ == "__main__" :
+  print "Initializing random seed", random_seed
+  random.seed(random_seed)
   for i in range(0, nsrc):    
     thread.start_new_thread(on_off_source, ("Thread-"+str(i),))
   sleep(duration+1)
