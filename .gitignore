@@ -13,3 +13,6 @@
 
 # swp files
 *.swp
+
+# Depend files
+depend
