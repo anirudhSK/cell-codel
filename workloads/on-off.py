@@ -6,6 +6,7 @@ from time import sleep
 import random
 import thread
 from httplib import BadStatusLine
+from  flowcdfallman import flowcdf
 
 # Fetch one flow's worth of bytes
 def issue_next_get(flow_size, conn, is_persistent, thread_fh):
@@ -49,7 +50,7 @@ def on_off_source(thread_name, url, duration, persistent_str, conns, time_start,
     sleep(off_time / 1000.0) 
   
     # Sample flow size
-    flow_size = int(random.expovariate(1.0/flow_mean))
+    flow_size = flowcdf[random.randint(0, len(flowcdf) - 1)]
 
     # Clamp flow_size
     if (flow_size > int(1e9)) :
